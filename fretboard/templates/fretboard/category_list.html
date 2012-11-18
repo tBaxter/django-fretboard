@@ -1,0 +1,34 @@
+{% extends "fretboard/base.html" %}{% load cache typogrify %}
+{% block content %}
+  <h1>Gretsch Discussion Pages</h1>
+  {% cache 600 forum-cat-list 10 %}
+    {% regroup forums by category as cat_list %}
+    <article id="forum_categories">
+      {% for cat in cat_list %}
+        <section>
+          <h1>{{cat.grouper}}</h1>
+          <dl class="fcatlist">
+            {% for forum in cat.list %}
+              <dt>
+                <a href="/forum/{{ forum.slug }}/" class="catname">{{ forum.name }}</a>
+              </dt>
+              <dd class="desc">{{forum.description|typogrify }}</dd>
+              <dd class="recent">
+                <ul>
+                  {% for topic in forum.get_recent %}
+                    <li class="{% cycle 'odd' 'even' %}">
+                      <a href="{{ topic.permalink }}">
+                        <strong>{{ topic.name }}</strong> 
+                        by {{ topic.author}}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </dd>
+            {% endfor %}
+          </dl>
+        </section>
+      {% endfor %}
+    </article>
+  {% endcache %}
+{% endblock %}

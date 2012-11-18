@@ -1,0 +1,37 @@
+{% load  typogrify fretboard_tags timesince_filters cache %}
+
+
+
+{% for topic in topics %}{# Cache these snippets until mod time changes #}
+	{% cache 240 't_list_x' topic.id topic.modified_int forum_slug user.is_superuser 9 %}
+	{% with topic.get_latest_post as latest %}{% with topic.forum as t_forum %}<article>
+		<section class="t">
+			<address class="author">{{topic.author }}</address>
+			{% if user.is_superuser %}<img src="/media/img/icons/fam/cog.png" class="tool_trigger right">
+				<span class="post_admin left">
+					{% if topic.is_sticky %}<a href="/forum/unstick_topic/{{topic.id}}/{{forum_slug}}/" onclick="return confirm('Unstick topic?')"><img src="/media/img/icons/fam/note_delete.png" alt="Unstick" title="Unstick"></a>
+					{% else %}<a href="/forum/stick_topic/{{topic.id}}/{{forum_slug}}/" onclick="return confirm('Stick topic?')"><img src="/media/img/icons/fam/note.png" alt="Sticky" title="Sticky"></a>{% endif %}
+					<a href="/forum/delete_topic/{{topic.id}}/{{forum_slug}}/" onclick="return confirm('Delete this topic?')"><img src="/media/img/icons/fam/cross.png" alt="Delete" title="Delete"></a>
+					{% if topic.is_locked %}<a href="/forum/open_topic/{{ topic.id }}/{{forum_slug}}/" onclick="return confirm('Open topic?')"><img src="/media/img/icons/fam/key.png" alt="Unlock" title="Unlock"></a>
+					{% else %} <a href="/forum/close_topic/{{topic.id}}/{{forum_slug}}/" onclick="return confirm('Close  topic?')"><img src="/media/img/icons/fam/lock.png" alt="Lock" title="Lock"></a>{% endif %}
+					<a href="/forum/move_topic/{{ topic.id }}/{{forum_slug}}/"><img src="/media/img/icons/fam/arrow_right.png" alt="Move" title="Move"></a>         
+				</span>{% endif %}
+			<h2>{% if topic.is_sticky %}<img src="/media/img/icons/fam/note.png" alt="*" class="left">{% endif %}{% comment %}<a href="{{ topic.permalink }}" class="topic_name{% if latest.post_date_int > lastseen_time %} bold{% endif %}">{% endcomment %}
+				<a href="{{ topic.permalink }}">{{ topic.name|typogrify }}</a> {% if topic.is_locked%}<img src="/media/img/icons/fam/lock.png" alt="[locked]">{% endif %} </h2>
+			<!--googleoff: all--><p class="meta">
+				{% if topic.created %}<time datetime="{{ topic.created|date:"Y-m-d\TH:i:00" }}">{{ topic.created|short_timesince }} ago</time>{% endif %}
+				{% if noadd %} in <a href="/forum/{{t_forum.slug}}/">{{ t_forum.name }}</a>{% endif %}
+			</p><!--googleon: all-->
+		</section><!-- /.t -->
+		<section class="last"><span class="meta">{{ latest.author_name|title }}</span>
+			<p class="sub_pagination">
+				<span class="pgs">{% if latest.post_date_int > lastseen_time %} <a href="{{ topic.get_short_url }}page{{ topic.page_count }}/#newposts" title="Jump to new posts" class="newposts">new</a>{%endif%}
+			   {{ topic|topic_pagination }}
+				</span>
+				<a href="{{topic.get_short_url}}page{{ topic.page_count }}/#post{{latest.id}}" class="jump_to_last" title="last_post">
+					<time datetime="{{ latest.post_date|date:"Y-m-d\TH:i:00" }}">{{ latest.post_date|short_timesince }}&nbsp;ago</time>  ►
+				</a>
+			</p> 
+		</section>
+	</article>{% endwith %}{% endwith %}{% endcache %}
+{% endfor %}

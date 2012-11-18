@@ -1,0 +1,59 @@
+[
+  {
+    "model": "fretboard.category",
+    "pk": 1,
+    "fields": {
+      "name": "Test Category",
+      "order": "1"
+    }
+  },
+  {
+    "model": "fretboard.forum",
+    "pk": 1,
+    "fields": {
+      "category": "1",
+      "name": "Test forum",
+      "slug": "test_forum",
+      "description": "A test forum",
+      "order": "1",
+      "message":"",
+      "is_closed": 0
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 1,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic",
+      "slug": "test_topic",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "author": "Bruce Wayne",
+      "post_count": 1,
+      "lastpost": "",
+      "latest_post": 1,
+      "lastpost_author": "Bruce Wayne",
+      "page_count": 1,
+      "permalink": "/forum/test_forum/test_topic/1/",
+      "votes": 0
+    }
+  },
+  {
+    "model": "fretboard.post",
+    "pk": 1,
+    "fields": {
+      "topic": 1,
+      "text": "Test topic post",
+      "text_formatted": "Test topic post",
+      "author": 1,
+      "author_name": "Bruce Wayne",
+      "post_date": "2012-11-18 00:30:33.789281",
+      "post_date_int": "1353220297"
+    }
+  }
+]

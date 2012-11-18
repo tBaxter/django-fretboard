@@ -1,0 +1,25 @@
+{% csrf_token %}
+{{ form.error_list }}
+<fieldset>
+	{% if add_topic == "True" or topic.author == user.preferred_name %}
+	<p id="topic_name"><label for="id_name">Topic name:</label> 
+	<input type="text" id="id_name" name="name" value="{{ topic.name }}">
+		{% if form.name.errors %}
+		<br />*** {{ form.name.errors|join:", " }}
+		{% endif %}
+	</p>
+	{% endif %}
+	<div id="postText"{% if formtype %} class="post"{% endif %}>
+		<textarea rows="10" cols="98" name="text" id="id_text" tabindex="1">{{ text }}</textarea>
+		<p style="display:none">
+			{% if form.image %}<label for="id_image" class="meta">Upload your image: </label> {{ form.image }}
+			{% else %}
+				{% if add_topic %}<label for="id_image" class="meta">Upload your image: </label> <input type="file" name="image" id="id_image">{% endif %}
+			{% endif %}
+		</p>
+	</div><!-- end postText -->
+	<p class="submit">
+		<label for="submit" id="submitlbl">
+		<input type="submit" value="{% firstof formtype 'Add post' %}" id="submit" tabindex="2"></label>
+	</p>
+</fieldset>

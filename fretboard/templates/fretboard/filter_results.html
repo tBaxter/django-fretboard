@@ -1,0 +1,90 @@
+{% extends "fretboard/base.html" %}{% load paginator truncatechars typogrify humanize fretboard_tags timesince_filters cache typogrify %}
+{% block title %}{{ forum_name }}: {% endblock%}
+{% block extrahead %}
+{{ block.super }}
+<style>
+#forum_search {border-bottom:2px solid #ddd; margin-bottom:.5em }
+#forum_search p {float:left; width:33.3%}
+#forum_search p.note {float:none; clear:both;; width:100%}
+#forum_search p input {width:90%}
+#forum_search input[type=submit] {margin-top:1.6em}
+mark {background:#ffc}
+#secondary #forum_search {display:none}
+</style>
+{% endblock %}
+
+{% block extrascript %}
+<script src="/media/js/jquery/highlight.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#results").highlight("{{query}}",  { element: 'mark', className: '' });
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="get" id="forum_search">
+            {{ filter.form.as_p }}
+            {{ postfilter.form.as_p }}
+            <input type="submit" value="search">
+            
+          <p class="note meta">Note: Topic search is much faster. Probably works better, too.</p>
+        </form>
+<h1>
+<span class="paginate right">
+{% if has_previous %}
+	<a href="?page={{ previous }}{{ get_string }}">&laquo;</a>
+{% endif %}
+{% if has_next %}
+	<a href="?page={{ next }}{{ get_string }}">&raquo;</a>
+{% endif %}
+</span>
+
+	<a href="/forum/">Forums:</a> {{ search_type }} Search {% if query %}for  {{ query }}{% endif %}</h1>
+
+{% ifequal search_type "Post" %}
+<div id="results">
+	{% for obj in object_list %}
+	{% ifchanged obj.topic %}
+		<h2>
+			<a href="{{ obj.topic.get_short_url }}page{{ obj.topic_page }}/#post{{ obj.id }}">
+				{{ obj.topic }}
+			</a>
+		</h2>
+	{% endifchanged %}
+	<p>{{ obj.text_formatted|safe|striptags|truncatewords:40 }}</p>
+	<hr>
+		{% endfor %}
+	</div>
+	{% else %}	
+	
+  {% if filter.data %}{% if filter.qs %}<div id="topic_list">
+  {% for topic in object_list %}
+  {% cache 240 't_list_x' topic.id topic.modified_int 'filters' 8 %}
+	{% with topic.get_latest_post as latest %}{% with topic.forum as t_forum %}<article>
+		<section class="t">
+			<address class="author">{{topic.author }}</address>
+			<h2>
+				<a href="{{ topic.permalink }}">{{ topic.name|typogrify }}</a></h2>
+			<!--googleoff: all--><p class="meta">
+				{% if topic.created %}<time datetime="{{ topic.created|date:"Y-m-d\TH:i:00" }}">{{ topic.created|short_timesince }} ago</time>{% endif %}
+				{% if noadd %} in <a href="/forum/{{t_forum.slug}}/">{{ t_forum.name }}</a>{% endif %}
+			</p><!--googleon: all-->
+		</section><!-- /.t -->
+		<section class="last"><span class="meta">{{ latest.author_name|title }}</span>
+			<p class="sub_pagination">
+				<span class="pgs">{% if latest.post_date_int > lastseen_time %} <a href="{{ topic.get_short_url }}page{{ topic.page_count }}/#newposts" title="Jump to new posts" class="newposts">new</a> {%endif%}
+			   {% ifnotequal topic.page_count 1 %} {{topic|topic_pagination }} {% else %} {% with topic.post_set.count as num_posts %}{{ num_posts }} post{{ num_posts|pluralize }}{% endwith %} {%endifnotequal %}
+				</span>
+				<a href="{{topic.get_short_url}}/page{{ topic.page_count }}/#post{{latest.id}}" class="jump_to_last" title="last_post">
+					<time datetime="{{ latest.post_date|date:"Y-m-d\TH:i:00" }}">{{ latest.post_date|short_timesince }}&nbsp;ago</time>  ►
+				</a>
+			</p> 
+		</section>
+	</article>{% endwith %}{% endwith %}{% endcache %}
+	{% endfor %}
+	{% endif %}
+	{% endif %}</div>
+	{% endifequal %}
+{% endblock %}

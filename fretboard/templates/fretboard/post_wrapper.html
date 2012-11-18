@@ -1,0 +1,152 @@
+{% extends "fretboard/base.html" %}
+{% load truncatechars fretboard_tags paginator %}
+{% block title %} {{topic.name }}{% if page != 1 %} (Page {{page}}){% endif %}: {{ forum_name }}: {% endblock%}
+{% block description %}{% with object_list.values.0 as firstpost %}{{ firstpost.author_name }} posted '{{topic.name }}'  in the Gretsch Discussion Pages '{{ forum_name }}' forum and said '{{ firstpost.text|truncatewords:"35" }}'{% endwith %}. The Gretsch Pages -- where real Gretsch talk happens &mdash; since 1995&trade;. {% if page != 1 %} This is page {{ page }}. {% endif %}{% endblock%}
+
+{% block extrahead %}
+  <link rel="canonical" href="http://gretschpages.com{{ topic.permalink }}">{{ block.super }}
+{% endblock %}
+
+{% block extrascript %} {{ block.super }}
+<script type="text/javascript">
+  var postlist = true;
+  var page = {{ page_obj.number }};
+  var original_page = page;
+  var prev_page = original_page-1
+  var loadable = true;
+  var page_max = {{ paginator.num_pages }};
+  var current_page = $('span.current_page');
+  var loaded = [page]
+
+  {% if user.open_board_links %}
+    $("div.post a").click(function(){
+      window.open(this.href,'','resizable=yes, width=800, height=600, menubar=yes, scrollbars=yes, toolbar=yes'); 
+      return false;
+    });
+  {% endif %}
+
+  $(window).scroll(function () {
+    main_offset = getYOffset();
+    load_posts()
+  });
+
+  $('.previous').click(function(e) {
+    e.preventDefault()
+    if ($.inArray(prev_page, loaded) == -1 && prev_page > 0) {
+      $.get('{{ topic.get_short_url }}page'+prev_page+'/', function(data) {
+        $('#postlist').prepend(data);
+        $('#postlist').prepend('<h1 class="xhr_pagination">Page '+ prev_page + '</h1>');
+        load_images();
+        loadable=true;
+        main_height = $('#main').height();
+        current_page.html(prev_page + '-' +page);
+        loaded.push(prev_page);
+        prev_page = prev_page -1
+      });
+    }
+    if (prev_page < 3) {
+      $('.pagearrow').remove()
+      if (prev_page <= 1) {
+        $('.previous').remove()
+      }
+    }
+    if (typeof(_gaq) != 'undefined'){
+      _gaq.push(['_trackPageview']);
+     //console.log('post page view')
+    };
+  })
+
+  if (Modernizr.localstorage) {
+    var viewed = lscache.get('viewed');
+    if (viewed == null) {
+      viewed = [];
+    }
+    if ($.inArray({{ topic.id }}, viewed) == -1) {
+      viewed.push({{ topic.id }});
+      lscache.set('viewed', viewed);
+    } 
+    if (viewed.length >=100){
+      viewed.splice(0,1);
+      lscache.set('viewed', viewed);
+    }
+  }
+
+  function load_posts() {
+    if (main_offset > main_height*.45 && loadable==true && $.inArray(page+1, loaded) == -1) {
+      loadable=false;
+      page += 1;
+      if (page <= page_max) {
+        $.get('{{ topic.get_short_url }}page'+page+'/', function(data) {
+          $('#postlist').append('<h1 class="xhr_pagination">Page '+ page + '</h1>');
+          $('#postlist').append(data);
+          load_images();
+          loadable=true;
+          main_height = $('#main').height();
+          // adjust pagination
+          current_page.html(original_page + '-' +page);
+          loaded.push(page);
+        
+          if (typeof(_gaq) != 'undefined'){
+            _gaq.push(['_trackPageview']);
+            //console.log('post page view')
+          };
+          main_height = $(main).height();
+        });
+      }
+    }
+  }
+</script>
+{% endblock %}
+
+{% block bodyid %}posts{% endblock %}
+
+{% block breadcrumbs %}
+  <a href="/forum/">Gretsch Discussion Pages</a> ► 
+  <a href="/forum/{{ forum_slug }}/">{{ forum_name }}</a>
+{% endblock %}
+
+{% block content %}
+  <hgroup id="postlist_header">
+    {% if is_paginated %}
+      <nav class="is_paginated clear right">
+        {% if page_obj.number > 2 %} 
+          <a href="{{ topic.get_short_url }}page1/" title="First Page" class="pagearrow">◀◀</a>
+        {% endif %}
+        {% if has_previous or page_obj.has_previous or page_obj.number > 1 %} 
+          <a href="{{ topic.get_short_url }}page{{ page_obj.previous_page_number }}/" class="previous">
+            <span>◀</span>
+          </a> 
+        {% endif %}
+        <span class="current_page"> {{ page_obj.number }} </span>
+      </nav>
+    {% endif %}
+    <h1>{{ topic.name|truncatechars:"70" }}</h1>  
+  </hgroup>
+  <div id="postlist">{% include "fretboard/includes/post_list.html" %}</div>
+  {% if locked %} 
+    <h2>This topic is locked. No further posts are being accepted.</h2>
+  {% else %} 
+    {% load socialize_tags %}
+    {% with topic as object %}{% social_links object user %}{% endwith %}
+  
+    {% if user.is_authenticated %}
+      <form method="post" action="/forum/add_post/{{ topic.slug }}/{{topic.id}}/" id="reply" enctype="multipart/form-data"> 
+        {% include "fretboard/includes/post_form.html" %}
+      </form>
+    {% else %}
+      <h4 id="reply">Want to join the conversation? <a href="/login/?next={{topic.get_short_url}}page{{ topic.page_count }}/" class="button">sign in</a> to post.</h4>
+    {% endif %} 
+  {% endif %}
+  <hr class="clear">
+  {% if is_paginated %}
+    <nav class="is_paginated clear right">
+      {% if page_obj.number > 2 %}
+        <a href="{{ topic.get_short_url }}page1/" title="First Page" class="pagearrow">◀◀</a>
+      {% endif %}
+      {% if has_previous or page_obj.has_previous or page_obj.number > 1 %}
+        <a href="{{ topic.get_short_url }}page{{ page_obj.previous_page_number }}/" class="previous"><span>◀</span></a>
+      {% endif %}
+      <span class="current_page"> {{ page_obj.number }} </span>
+    </nav>
+  {% endif %}
+{% endblock %}

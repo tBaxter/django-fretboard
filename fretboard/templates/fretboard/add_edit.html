@@ -1,0 +1,21 @@
+{% extends "fretboard/base.html" %}
+{% block bodyclass %}collapsed{% endblock %}
+{% block title %} {{ formtype }}: {% endblock%}
+{% block breadcrumbs %}<a href="/forum/">Gretsch Discussion Pages</a> ► {{ formtype }}{% endblock %}
+
+{% block content %}
+	<h1>{{ formtype }}</h1>
+	{% if quote.0 %}
+	<div id="posts">
+	<ul id="postlist">
+		{% with quote as object_list %}
+			{% include "fretboard/includes/post_list.html" %}
+		{% endwith %}
+	</ul>
+	</div>
+	{% endif %}
+	<form method="post" action="." id="reply"  enctype="multipart/form-data">{% csrf_token %}
+		{% include "fretboard/includes/post_form.html" %}
+	</form>
+{% endblock %}
+{% block secondary %}{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "fretboard/base.html" %}
+{% load paginator %}
+{% block title %}Gretsch Discussion Pages: {{ forum_name }}{% ifnotequal page 1 %} (page {{page }}){% endifnotequal %} | {% endblock%}
+{% block description %}{{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} on {{ block.super }}{% endblock%}
+
+{% block bodyid %}topics{% endblock %}
+
+{% block breadcrumbs %}<a href="/forum/">Gretsch Discussion Pages</a>  ► {{ forum_name }} {% endblock %}
+
+{% block forum_nav %}
+	{% if user.is_authenticated and not noadd %}<li><a href="/forum/{{forum_slug}}/add-topic/">✚ Add A Topic</a></li>{% endif %}
+	{{ block.super }}
+{% endblock %}
+
+{% block content %}
+  {% if admin_msg %}<h2 class="alert">{{ admin_msg|safe }}</h2>{% endif %}
+  <h1>{{ forum_name }}</h1>
+  {% if user.is_authenticated and not noadd %}
+    <a href="/forum/{{forum_slug}}/add-topic/" class="button right">✚ Add A Topic</a>
+  {% endif %}
+  <div id="topic_list">{% include "fretboard/includes/topic_list.html" %}</div>
+  <p>
+    {% if user.is_authenticated and not noadd %}
+      <a href="/forum/{{forum_slug}}/add-topic/" class="button right add_topic">✚ Add A Topic</a>
+    {% endif %}
+    <span >{% paginator 3 %}</span>
+  </p>
+{% endblock %}
+
+{% block extrascript %}
+{{ block.super }}
+<script>
+	var page      = {{ page }};
+	var loadable  = true;
+	var page_max  = {{ paginator.num_pages }};
+	var topiclist = true;
+	
+	$(document).scroll(function () {
+		main_offset = getYOffset();
+		load_topics()
+	});
+	function load_topics() {
+		if (main_offset > main_height*.5 && loadable==true) {
+	  		loadable=false;
+			page += 1;
+			if (page <= page_max) {
+				$.get('/forum/{{ forum_slug }}/page'+page+'/?xhr', function(data) {
+  					$('#topic_list').append('<h1 class="xhr_pagination">Page '+ page + '</h1>');
+  					$('#topic_list').append(data);
+  					loadable=true;
+  					if (touchable) {
+  						scrollContent.refresh()
+  					}
+  					if (typeof(_gaq) != 'undefined'){
+						_gaq.push(['_trackPageview']);
+						//console.log('page view')
+					};
+  					main_height = $(main).height();
+				});
+				
+			}
+		}
+	}	
+</script>
+{% endblock %}
