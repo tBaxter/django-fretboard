@@ -1,6 +1,6 @@
 {% extends "fretboard/base.html" %}{% load cache typogrify %}
 {% block content %}
-  <h1>Gretsch Discussion Pages</h1>
+  <h1>{{ site_name }}</h1>
   {% cache 600 forum-cat-list 10 %}
     {% regroup forums by category as cat_list %}
     <article id="forum_categories">

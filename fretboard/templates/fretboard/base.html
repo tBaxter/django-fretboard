@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% load cache sponsorlist guitar_tags thumbnail event_tags fretboard_tags %}
 {% block appcache %}{% endblock %}
-{% block title %}The Gretsch Discussion Pages &mdash; Gretsch Guitar Forums: {% endblock %}
-{% block description %}The Gretsch Discussion Pages: The original and largest Gretsch guitar forum. Where real Gretsch talk happens &mdash; since 1995&trade;{% endblock %}
+{% block title %}{{ site_name }} {% endblock %}
+
 {% block extrahead %}
 	<link rel="stylesheet" href="/media/css/sections/fretboard.css?v=1">
-	{% if user.is_authenticated %}<link rel="stylesheet" type="text/css" href="/media/markitup/sets/markdown-simple/style_2012.css?v=3">{% endif %}
+	{% if user.is_authenticated %}
+		<link rel="stylesheet" type="text/css" href="/media/markitup/sets/markdown-simple/style_2012.css?v=3">
+	{% endif %}
 {% endblock %}
 
 {% block extrascript %}
@@ -17,29 +19,23 @@
   	 if (Modernizr.localstorage) {
 		var new_topic = {% firstof request.GET.new_topic 'null' %}
 		var new_post  = {% firstof request.GET.new_post 'null' %}
-		//console.log('new' + new_post)
 		var viewed    = lscache.get('viewed')
 		var topics    = lscache.get('topics')
 		
 		{% if user.is_superuser %}
-		//localStorage.removeItem("topics");
 		if (new_post != null) {
-			//alert(new_post)
 		}
 		{% endif %}
 		
-		// make sure topics exists
 		if (!topics) {
 			topics = [];
 		}
 		// new topics
-		//if (new_topic != 'null' && topics.indexOf(new_topic) == -1) {
 		if (new_topic != null && $.inArray(new_topic, topics) == -1) {
 			topics.push(new_topic);
 			lscache.set('topics', topics)
 		}
 		// new posts
-		//if (new_post != null && topics.indexOf(new_post) == -1) {
 		if (new_post != null && $.inArray(new_post, topics) == -1) {
 			topics.push(new_post);
 			lscache.set('topics', topics)
@@ -77,7 +73,7 @@
 
 {% block bodyid %}board{% endblock %}
 {% block breadcrumbs %}
-	Gretsch Discussion Pages
+	{{ site_name }}
 	{% block announcement %}{% endblock %}
 {% endblock %}
 
@@ -90,7 +86,7 @@
  	
  	{# keep within authenticated block to keep hits down #}
      <li id="searchhold"><a href="/forum/search/" id="search-box-trigger">Search</a></li>
-     <li> 	      	
+     <li>
        <form action="/forum/search/" method="get" id="forum_search">{% csrf_token %}
             <p><label for="id_name">Topic name:</label> <input type="text" name="name" value="" id="id_name" /></p>
             <p><label for="id_text">Post text:</label> <input type="text" name="text" id="id_text" /></p>
@@ -110,56 +106,4 @@
 		{% endfor %}
        	</select>
 		</li> 
-{% endblock %}
-
-{% block secondary %}
-  <aside id="birthdays" class="sidebar">
-	<h1>Stalkin'</h1>
-	{% cache 1200 activity_monitor 15 %}
-		{% load activity_tags %}
-		{% show_recent_activity 7 '' %}
-	{% endcache %}
-  </aside>
-  {% cache 300 adverts 'forum' 24 %}
-    <aside id="sponsors" class="sidebar clear">{% get_sponsors_list discussion as sponsor_list %}
-      <h1>Sponsors</h1>
-      <ul class="clearfix">{% for sponsor in sponsor_list %}
-        <li>
-          {% if forloop.counter == 1 or forloop.counter == 5 %}
-            <a href="{{ sponsor.link }}" data-deferred-image="/media/{{sponsor.image }}" class="right"></a>
-          {% endif %}
-          <a href="{{ sponsor.link }}">{{ sponsor.name|safe}}</a>
-        </li>{% endfor %}
-      </ul>
-    </aside><!-- /sponsors -->
-    <aside class="sidebar">
-      <h1>Donate</h1>
-      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate">
-        <input type="hidden" name="cmd" value="_xclick" />
-        <input type="hidden" name="business" value="baxter@gretschpages.com" />
-        <input type="hidden" name="item_name" value="The Gretsch Pages" />
-        <input type="hidden" name="no_shipping" value="2" />
-        <input type="hidden" name="no_note" value="1" />
-        <input type="hidden" name="currency_code" value="USD" />
-        <input type="hidden" name="tax" value="0" />
-        <input type="hidden" name="bn" value="PP-DonationsBF" />
-        <p>Please help <strong>support the Gretsch Pages</strong> through Paypal. It's quick, easy, and much appreciated!</p>
-        <input type="submit" name="submit" value="Make a Donation">
-        <img src="https://www.paypal.com/en_US/i/scr/pixel.gif" class="noscale">
-      </form>
-    </aside>
-    <aside id="gretsch-gear" class="sidebar">
-      <h1><a href="/guitars/">Gretsch-GEAR</a></h1>
-      {% get_featured_guitars as featured %}
-      {%  with featured.examples.0 as example %}
-        <a href="/guitars/models/examples/{{ example.id }}/">
-          <figure>
-            {% thumbnail example.image 200x270 autocrop crop=",-0" upscale as thumb %}
-            <img src="{{ thumb }}" alt="{{example.year}}">
-            <figcaption>{{ example.year }} {{ example.model }}</figcaption>
-          </figure>
-        </a>
-      {% endwith %}
-    </aside>
-  {% endcache %}
 {% endblock %}

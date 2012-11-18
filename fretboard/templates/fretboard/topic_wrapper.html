@@ -1,11 +1,11 @@
 {% extends "fretboard/base.html" %}
 {% load paginator %}
-{% block title %}Gretsch Discussion Pages: {{ forum_name }}{% ifnotequal page 1 %} (page {{page }}){% endifnotequal %} | {% endblock%}
+{% block title %}{{ site_name }}: {{ forum_name }}{% ifnotequal page 1 %} (page {{page }}){% endifnotequal %} | {% endblock%}
 {% block description %}{{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} on {{ block.super }}{% endblock%}
 
 {% block bodyid %}topics{% endblock %}
 
-{% block breadcrumbs %}<a href="/forum/">Gretsch Discussion Pages</a>  ► {{ forum_name }} {% endblock %}
+{% block breadcrumbs %}<a href="/forum/">{{ site_name }}</a>  ► {{ forum_name }} {% endblock %}
 
 {% block forum_nav %}
 	{% if user.is_authenticated and not noadd %}<li><a href="/forum/{{forum_slug}}/add-topic/">✚ Add A Topic</a></li>{% endif %}
@@ -53,7 +53,6 @@
   					}
   					if (typeof(_gaq) != 'undefined'){
 						_gaq.push(['_trackPageview']);
-						//console.log('page view')
 					};
   					main_height = $(main).height();
 				});

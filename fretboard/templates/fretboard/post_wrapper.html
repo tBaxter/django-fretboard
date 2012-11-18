@@ -1,10 +1,10 @@
 {% extends "fretboard/base.html" %}
 {% load truncatechars fretboard_tags paginator %}
 {% block title %} {{topic.name }}{% if page != 1 %} (Page {{page}}){% endif %}: {{ forum_name }}: {% endblock%}
-{% block description %}{% with object_list.values.0 as firstpost %}{{ firstpost.author_name }} posted '{{topic.name }}'  in the Gretsch Discussion Pages '{{ forum_name }}' forum and said '{{ firstpost.text|truncatewords:"35" }}'{% endwith %}. The Gretsch Pages -- where real Gretsch talk happens &mdash; since 1995&trade;. {% if page != 1 %} This is page {{ page }}. {% endif %}{% endblock%}
+{% block description %}{% with object_list.values.0 as firstpost %}{{ firstpost.author_name }} posted '{{topic.name }}'  in the {{ site_name }} '{{ forum_name }}' forum and said '{{ firstpost.text|truncatewords:"35" }}'{% endwith %}. {% if page != 1 %} This is page {{ page }}. {% endif %}{% endblock%}
 
 {% block extrahead %}
-  <link rel="canonical" href="http://gretschpages.com{{ topic.permalink }}">{{ block.super }}
+  <link rel="canonical" href="{{ topic.permalink }}">{{ block.super }}
 {% endblock %}
 
 {% block extrascript %} {{ block.super }}
@@ -52,7 +52,6 @@
     }
     if (typeof(_gaq) != 'undefined'){
       _gaq.push(['_trackPageview']);
-     //console.log('post page view')
     };
   })
 
@@ -88,7 +87,6 @@
         
           if (typeof(_gaq) != 'undefined'){
             _gaq.push(['_trackPageview']);
-            //console.log('post page view')
           };
           main_height = $(main).height();
         });
@@ -101,7 +99,7 @@
 {% block bodyid %}posts{% endblock %}
 
 {% block breadcrumbs %}
-  <a href="/forum/">Gretsch Discussion Pages</a> ► 
+  <a href="/forum/">{{ site_name }}</a> ► 
   <a href="/forum/{{ forum_slug }}/">{{ forum_name }}</a>
 {% endblock %}
 
@@ -126,11 +124,8 @@
   {% if locked %} 
     <h2>This topic is locked. No further posts are being accepted.</h2>
   {% else %} 
-    {% load socialize_tags %}
-    {% with topic as object %}{% social_links object user %}{% endwith %}
-  
     {% if user.is_authenticated %}
-      <form method="post" action="/forum/add_post/{{ topic.slug }}/{{topic.id}}/" id="reply" enctype="multipart/form-data"> 
+      <form method="post" action="/forum/add_post/{{ topic.slug }}/{{ topic.id }}/" id="reply" enctype="multipart/form-data"> 
         {% include "fretboard/includes/post_form.html" %}
       </form>
     {% else %}
