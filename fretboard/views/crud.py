@@ -125,7 +125,6 @@ def add_post(request, t_slug, t_id, p_id = False, mobile=""):  # topic slug, top
             topic.modified     = now
             topic.modified_int = time.time()
             topic.save(update_fields=['modified', 'modified_int'])
-            #topic.save()
 
             if 'mobile' in request.GET:
                 mobile = '_!m'

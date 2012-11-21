@@ -7,6 +7,14 @@
       "order": "1"
     }
   },
+    {
+    "model": "fretboard.category",
+    "pk": 2,
+    "fields": {
+      "name": "Second Category",
+      "order": "2"
+    }
+  },
   {
     "model": "fretboard.forum",
     "pk": 1,

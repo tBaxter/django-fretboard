@@ -8,7 +8,7 @@ from fretboard.views import *
 urlpatterns = patterns('fretboard.views.moderate',
   (r'^close_topic/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',   'close_topic'),
   (r'^open_topic/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',    'open_topic'),
-  (r'^move_topic/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',    'move_topic'),
+  url(r'^move_topic/(?P<t_id>[0-9]+)/(?P<f_slug>[-\w]+)/$', 'move_topic', name="move_topic"),
   (r'^delete_topic/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',  'delete_topic'),
   (r'^delete_post/(?P<post_id>[0-9]+)/(?P<topic_id>[0-9]+)/$',      'delete_post'),
   (r'^stick_topic/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',   'stick_topic'),

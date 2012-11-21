@@ -38,22 +38,22 @@ def open_topic(request, topic_id, forum_slug):
         return HttpResponseRedirect(redirect_to)
 
 
-def move_topic(request, topic_id, forum_slug):
+def move_topic(request, t_id, f_slug):
     """
     Move topic. If we know the destination, just do it. Otherwise, provide a page to make the selection.
     """
     if request.user.is_staff:
         if request.POST and len(request.POST['forum']) > 0:
-            topic = Topic.objects.get(id=topic_id)
+            topic = Topic.objects.get(id=t_id)
             topic.forum = Forum.objects.get(id=request.POST['forum'])
             topic.save()
         else:
-            forums = Forum.objects.exclude(slug=forum_slug)
-            topic = Topic.objects.get(id=topic_id)
+            forums = Forum.objects.exclude(slug=f_slug)
+            topic = Topic.objects.get(id=t_id)
             return render(request, 'fretboard/utils/move_topic.html', {'forums': forums, 'topic': topic})
     else:
         messages.error(request, "You don't have permissions to move topics.")
-    return HttpResponseRedirect("/forum/{0}/".format(forum_slug))
+    return HttpResponseRedirect("/forum/{0}/".format(f_slug))
 
 
 
