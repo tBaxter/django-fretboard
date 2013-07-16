@@ -1,27 +1,42 @@
-{% load fretboard_tags voting_tags markup timesince_filters  %}
-<ol start="{{ start_number }}">
-{% for i in object_list %}<li class="{{ i.votes|score_collapse }}" id="post{{i.id}}">
-	<address{% if i.id == newpost %} id="newposts"{% endif %}>
-		<a href="/community/{{ i.author_id }}/" rel="author"><span class="avatar" data-deferred-image="/media/{% firstof i.avatar '/img/avatars/default.jpg' %}"></span> {{ i.author_name }}</a> <time datetime="{{ i.post_date|date:"Y-m-d\TH:i:00" }}" title="{{ i.post_date|date:"N j, Y g:i a" }}" >{{ i.post_date|short_timesince }} ago</time>
-	</address>
-	<div class="post clearfix">
-		{% if i.image %}<figure class="right" data-deferred-image="{{ i.image.extra_thumbnails.mobile }}"></figure>{% endif %}		
-		{% if i.text_formatted %} {{ i.text_formatted|safe }} {% else %} {{ i.text|markdown }} {% endif %}
-	</div>
-	{% if not locked and user.is_authenticated %}<ul class="postcontrols">
-		<li class="reply"><a href="#reply" class="quick_reply" title="Quick reply to this topic">Reply</a></li>
-		<li class="mod" title="More options"><span>▼ &nbsp; options </span>
-			<ul>
-				<li class="quote"><a href="/forum/add_post/{{topic_slug}}/{{topic_id}}/{{i.id}}">Quote</a></li>
-				{% if i.author_id == user.id or user.is_staff %} <li class="edit"><a href="/forum/edit_post/{{ i.id}}/">Edit</a></li>
-				<li class="delete"><a href="/forum/delete_post/{{ i.id }}/{{ topic_id }}/" onclick="return confirm('Delete This Post?')" title="Delete this post">Delete</a></li>{% endif %}
-			</ul>
-		</li>
-	</ul>			
-	<span class="postvoting">
-		<a href="/vote/post/{{i.id}}/downvote/xhr/" class="report" onclick="return confirm('Mark as no value, inflammatory or spam?')">▼</a>
-		<span class="votes">{{ i.votes|clean_bad }}</span>
-		<a href="/vote/post/{{i.id}}/upvote/xhr/" title="Mark as helpful, informative or interesting." class="voting">▲</a>
-	</span>
-	{% endif %}       
-</li>{% endfor %}</ol>
+{% load fretboard_tags voting_tags markup timesince_filters %}
+
+<div id="comment-list">
+  {% for obj in object_list %}
+    <article class="post {{ obj.votes|collapse_bad }}" id="post-{{ obj.id }}">
+      {% include "fretboard/includes/post_single.html" %}
+      {% if authenticated_request %}
+        <footer>
+          {% if user.show_signatures and obj.author.signature %}
+            <p class="meta signature">{{ obj.author.signature|striptags }}</p>
+          {% endif %}
+          {% if not locked %}
+            <ul class="postcontrols button sub-nav thinline">
+              <li>
+                <a href="#reply" title="Quick reply to this topic">Reply</a>
+                <span class="button-trigger divide-left">▼</span>
+                <ul class="button-target">
+                  <li class="icon-quote">
+                    <a href="{% url 'post_with_quote' topic_slug topic_id obj.id %}">Quote</a>
+                  </li>
+                  {% if obj.author_id == user.id or user.is_staff and perms.fretboard.can_delete_post %}
+                    <li class="icon-edit">
+                      <a href="{% url 'edit_post' obj.id %}">Edit</a>
+                    </li>
+                    <li class="icon-delete post-admin">
+                      <a href="{% url 'delete_post' obj.id topic_id %}" data-confirm="Delete This Post?">Delete</a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </li>
+            </ul>
+            <span class="post-voting post-admin button thinline">
+              <a href="{% url 'generic_vote' 'post' obj.id 'down' %}" data-confirm="use_title" title="Mark as no value, inflammatory or spam?">▼</a>
+              <span class="votes">{{ obj.votes|clean_score }}</span>
+              <a href="{% url 'generic_vote' 'post' obj.id 'up' %}" title="Mark as helpful, informative or interesting.">▲</a>
+            </span>
+          {% endif %}
+        </footer>
+      {% endif %}
+    </article>
+  {% endfor %}
+</div>

@@ -2,13 +2,12 @@ import time
 import datetime
 
 from django.conf import settings
-from django.core.paginator import Paginator
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
 
 from fretboard.filters import PostFilter, TopicFilter
 from fretboard.models import Forum, Topic, Post
+from fretboard.forms import PostForm
 
 now        = datetime.datetime.now()
 pag_by     = settings.PAGINATE_BY
@@ -26,7 +25,9 @@ class BaseTopicList(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         self.forum_slug = kwargs.get('forum_slug', False)
-        self.page       = kwargs.get('page', 1)
+        self.page       = kwargs.get('page', request.GET.get('page'))
+        if not self.page:
+            self.page = 1
         return super(BaseTopicList, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -39,13 +40,38 @@ class BaseTopicList(ListView):
         context.update({
             'lastseen_time' : self.request.session.get('last_seen', None),
             'page'          : int(self.page)
-            })
+        })
+        return context
+
+
+class NewTopics(BaseTopicList):
+    """
+    Subclasses BaseTopicList to provide new topics.
+    New topics are whatever is new since the visitor was last seen,
+    or from the past day, whichever is greater.
+    """
+
+    def get_queryset(self):
+        one_day_ago     = now - datetime.timedelta(days=1)
+        one_day_ago_int = time.mktime(one_day_ago.timetuple())
+        last_seen_timestamp = self.request.session.get('last_seen_timestamp', None)
+        if not last_seen_timestamp or last_seen_timestamp > one_day_ago_int:
+            last_seen_timestamp = one_day_ago_int
+        return Topic.objects.filter(modified_int__gt=last_seen_timestamp).select_related(depth=1)
+
+    def get_context_data(self, **kwargs):
+        context = super(NewTopics, self).get_context_data(**kwargs)
+        context.update({
+            'forum_slug' : 'latest-topics',
+            'forum_name' : "Latest active topics",
+        })
         return context
 
 
 class LatestTopics(BaseTopicList):
     """
     Subclasses BaseTopicList to provide topics modified within the past day.
+    Deprecated by newtopics (above)
     """
     one_day_ago     = now - datetime.timedelta(days=1)
     one_day_ago_int = time.mktime(one_day_ago.timetuple())
@@ -54,9 +80,8 @@ class LatestTopics(BaseTopicList):
     def get_context_data(self, **kwargs):
         context = super(LatestTopics, self).get_context_data(**kwargs)
         context.update({
-          'forum_slug' : 'latest-topics',
-          'forum_name' : "Latest active topics",
-          'noadd'      : True
+            'forum_slug' : 'latest-topics',
+            'forum_name' : "Latest active topics",
         })
         return context
 
@@ -73,9 +98,10 @@ class TopicList(BaseTopicList):
     def get_context_data(self, **kwargs):
         context = super(TopicList, self).get_context_data(**kwargs)
         context.update({
-          'forum_slug'   : self.forum_slug,
-          'forum_name'   : self.forum.name,
-          'admin_msg'    : self.forum.message,
+            'forum_slug'   : self.forum_slug,
+            'forum_name'   : self.forum.name,
+            'admin_msg'    : self.forum.message,
+            'can_add_topic': True
         })
         return context
 
@@ -108,83 +134,81 @@ class PostList(ListView):
         forum   = self.topic.forum
         # start number tells the numbered lists where to start counting.
         start_number = int(self.page)
+        newposts     = None
+        new_post_id  = None
+
         if start_number > 1:
             start_number = (settings.PAGINATE_BY * (start_number - 1)) + 1
 
-        newpost = None
         if 'last_seen' in self.request.session:
+            newposts = self.get_queryset().filter(post_date__gt=self.request.session['last_seen']).values_list('id', flat=True)
             try:
-                # Sort current valid posts by post date, get the first, and only its PK
-                newpost = self.get_queryset().filter(post_date__gt=self.request.session['last_seen']).order_by('post_date')[0].pk
+                new_post_id = newposts[0]
             except IndexError:
                 pass
 
+        canonical_url = "%spage%s/" % (self.topic.get_short_url(), self.page)
+
         context.update({
-            'locked'      : self.topic.is_locked,
-            'topic'       : self.topic,
-            'topic_id'    : self.topic.id,
-            'topic_slug'  : self.topic.slug,
-            'start_number': start_number,
-            'newpost'     : newpost,
-            'page'        : self.page,
-            'forum_slug'  : forum.slug,
-            'forum_name'  : forum.name
-            })
+            'locked'        : self.topic.is_locked,
+            'topic'         : self.topic,
+            'topic_id'      : self.topic.id,
+            'topic_slug'    : self.topic.slug,
+            'start_number'  : start_number,
+            'newposts'      : newposts,
+            'new_post_id'   : new_post_id,
+            'page'          : self.page,
+            'forum_slug'    : forum.slug,
+            'forum_name'    : forum.name,
+            'canonical_url' : canonical_url,
+            'form'          : PostForm(),
+        })
         return context
 
 
-def filter_search(request):
-    """ To do: Rewerite this. """
-    topicfilter = TopicFilter(request.GET, queryset=Topic.objects.filter(is_locked=False))
-    postfilter  = PostFilter(request.GET, queryset=Post.objects.all().order_by('-topic__id'))
-    query       = ''
-    search_type = 'default'
-    get_string  = ''
+class ForumSearch(BaseTopicList):
+    forum_name = 'Forum search'
 
-    if 'page' in request.GET:
-        page = int(request.GET['page'])
-    else:
-        page = 1
-    if 'name' in request.GET or 'text' in request.GET:
-        get_string = '&name=%s&text=%s' % (request.GET['name'], request.GET['text'])
-        if 'name' in request.GET and request.GET['name'] != '':
-            paginator = Paginator(topicfilter.qs, settings.PAGINATE_BY)
+    def dispatch(self, request, *args, **kwargs):
+        self.topicfilter = TopicFilter(request.GET)
+        self.postfilter  = PostFilter(request.GET)
+        return super(ForumSearch, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.name_search = request.GET.get('name', '')
+        self.text_search = request.GET.get('text', '')
+        # If we have no parameters, just show the search.
+        if self.name_search == '' and self.text_search == '':
+            return render(request, self.template_name, {
+                'filter': self.topicfilter,
+                'postfilter': self.postfilter,
+            })
+        self.object_list = self.get_queryset()
+        context = self.get_context_data(object_list=self.object_list)
+        return self.render_to_response(context)
+
+    def get_queryset(self):
+        if self.name_search != '':
+            return self.topicfilter.qs
+        # if it's a post search, override the default topic list template.
+        self.template_name = 'fretboard/filter_results.html'
+        return self.postfilter.qs
+
+    def get_context_data(self, **kwargs):
+        context = super(ForumSearch, self).get_context_data(**kwargs)
+        if self.name_search != '':
             search_type = 'Topic'
-            query = request.GET['name']
-        elif 'text' in request.GET and request.GET['text'] != '':
-            paginator = Paginator(postfilter.qs, settings.PAGINATE_BY)
-            search_type = "Post"
-            query = request.GET['text']
-        if paginator:
-            p = paginator.page(page)
-            objects = p.object_list
+            query = self.name_search
         else:
-            return HttpResponse('no queryset found')
-        return render(request, 'fretboard/filter_results.html', {
-            'object_list': objects,
-            'forum_slug': 'search',
-            'forum_name': 'Forum search',
-            'user': request.user,
-            'paginator': paginator,
-            'is_paginated': p.has_other_pages(),
-            'has_next': p.has_next(),
-            'has_previous': p.has_previous(),
-            'page': page,
-            'next': page + 1,
-            'previous': page - 1,
-            'pages': paginator.num_pages,
-            'hits' : paginator.count,
-            'results_per_page': settings.PAGINATE_BY,
-            'filter': topicfilter,
-            'postfilter': postfilter,
+            search_type = 'Post'
+            query = self.text_search
+        context.update({
             'search_type': search_type,
-            'get_string': get_string,
-            'query': query
+            'forum_slug': 'search',
+            'forum_name': self.forum_name,
+            'query': query,
+            'filter': self.topicfilter,
+            'postfilter': self.postfilter,
+            'page': self.page,
         })
-
-    return render(request, 'fretboard/filter_results.html', {
-        'filter': topicfilter,
-        'postfilter': postfilter,
-        'search_type': '',
-        'object_list': [],
-    })
+        return context

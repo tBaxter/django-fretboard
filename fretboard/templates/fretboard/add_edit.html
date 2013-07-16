@@ -1,21 +1,19 @@
 {% extends "fretboard/base.html" %}
-{% block bodyclass %}collapsed{% endblock %}
-{% block title %} {{ formtype }}: {% endblock%}
-{% block breadcrumbs %}<a href="/forum/">{{ site_name }}</a> ► {{ formtype }}{% endblock %}
+
+{% block title %} {{ form_title }}: {% endblock%}
 
 {% block content %}
-	<h1>{{ formtype }}</h1>
-	{% if quote.0 %}
-	<div id="posts">
-	<ul id="postlist">
-		{% with quote as object_list %}
-			{% include "fretboard/includes/post_list.html" %}
-		{% endwith %}
-	</ul>
-	</div>
-	{% endif %}
-	<form method="post" action="." id="reply"  enctype="multipart/form-data">{% csrf_token %}
-		{% include "fretboard/includes/post_form.html" %}
-	</form>
+	<h1>{{ form_title }}</h1>
+  {% if quote %}
+    <div id="comment-list">
+      <article>
+        {% with quote as obj %}
+          {% include "fretboard/includes/post_single.html" %}
+        {% endwith %}
+      </article>
+    </div>
+  {% endif %}
+  <form method="post" action="." id="reply" class="boxedform" enctype="multipart/form-data">
+    {% include "fretboard/includes/post_form.html" %}
+  </form>
 {% endblock %}
-{% block secondary %}{% endblock %}

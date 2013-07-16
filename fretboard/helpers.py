@@ -1,93 +1,264 @@
-from django.template.defaultfilters import urlizetrunc
-from django.utils.html import strip_tags
+import datetime
+import re
+import time
+import urlparse
 
-from re import findall
-from html_filter import html_filter
-htmlfilter = html_filter()
-
+import bleach
 import markdown
 
+from django.template.defaultfilters import urlizetrunc, linebreaks
+from django.utils.encoding import force_text
+from django.utils.safestring import SafeData, mark_safe
+from django.utils.html import TRAILING_PUNCTUATION, WRAPPING_PUNCTUATION, \
+    escape, word_split_re, simple_url_re, simple_url_2_re, smart_urlquote, simple_email_re
 
-bad_word_replacements = {
-	'fuck'   : 	'smurf',
-	'FUCK'   :	'SMURF',
-	'Fuck'   : 	'Smurf',
-	'fucked' : 	'smurfed',
-	'fucker' : 	'smurfer',
-	'Fucker' : 	'Smurfer',
-	'fucking': 	'smurfing',
-	'Fucking': 	'Smurfing',
+
+# These are based on defaults from bleach.
+ALLOWED_TAGS = (
+    'a',
+    'b',
+    'blockquote',
+    'br',
+    'em',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'strong',
+    'ul',
+    'hr',
+    'p',
+    'h3',
+    'video',
+    'span',
+    'iframe'
+)
+
+ALLOWED_ATTRIBUTES = {
+    'a':   ('href', 'title', 'rel'),
+    'img': ('src', 'alt'),
+    'iframe': ('src', 'height', 'width'),
+    '*':   ('class',),
 }
 
-formatting_replacements = {
-	# smilies
-	':-D'   :	'<img src="/media/img/icons/smilies/laugh-18.png" class="smiley" alt=":D">',
-	':)'    :	'<img src="/media/img/icons/smilies/grin-18.png" class="smiley" alt=":)">',
-	':|'    :	'<img src="/media/img/icons/smilies/whatthe-18.png" class="smiley" alt=":|">',
-	':('    :	'<img src="/media/img/icons/smilies/unhappy-18.png" class="smiley" alt=":(">',
-	'8-o'   :	'<img src="/media/img/icons/smilies/googly-18.png" class="smiley" alt="8-o">',
-	';-)'   : 	'<img src="/media/img/icons/smilies/wink-18.png" class="smiley" alt=";-)" >',
-	':-P'   :	'<img src="/media/img/icons/smilies/crazy-18.png" class="smiley" alt=":P">',
-	':mad:' :	'<img src="/media/img/icons/smilies/evil-18.png" class="smiley" alt="!#$@%" >',
-	'8-)'   :	'<img src="/media/img/icons/smilies/cool-18.png" class="smiley" alt="8-)">',
 
-	# bbcode
-	'[b]'      : '<strong>',
-	'[/b]'     : '</strong>',
-	'[i]'      : '<em>',
-	'[/i]'     : '</em>',
-	'[quote]'  : '<blockquote>',
-	'[/quote]' : '</blockquote>',
-	'[url]'    : '',
-	'[/url]'   : '',
-	'[img]'    : '',
-	'[/img]'   : '',
-}
+bad_word_replacements = (
+    ('fuck',    'smurf'),
+    ('FUCK',    'SMURF'),
+    ('Fuck',    'Smurf'),
+    ('fucked',  'smurfed'),
+    ('fucker',  'smurfer'),
+    ('Fucker',  'Smurfer'),
+    ('fucking', 'smurfing'),
+    ('Fucking', 'Smurfing'),
+)
 
+bbcode_replacements = (
+    (r'\[url\](.+?)\[/url\]',       r'\[link\]\(\1\)'),
+    (r'\[url=(.+?)\](.+?)\[/url\]', r'\[\2\]\(\1\)'),
+    (r'\[img\](.+?)\[/img\]',       r'\1'),
+    (r'\[IMG\](.+?)\[/IMG\]',       r'\1'),
+    (r'\[img=(.+?)\](.+?)\[/img\]', r'\1'),
+    (r'\[b\](.+?)\[/b\]',           r'**\1**'),
+    (r'\[i\](.+?)\[/i\]',           r'*\1*'),
+    (r'\[quote\](.+?)\[/quote\]',   r'<blockquote>\1</blockquote>'),
+)
+
+emoticon_replacements = (
+    (' :) ',       'happy'),
+    (':-)',        'happy'),
+    (':smile:',    'happy'),
+    (' :( ',       'unhappy'),
+    (':-(',        'unhappy'),
+    (':sad:',      'unhappy'),
+    (' ;) ',       'wink2'),
+    (';-)',        'wink2'),
+    (':wink:',     'wink2'),
+    (' :P ',       'tongue'),
+    (':-P',        'tongue'),
+    (':razz:',     'tongue'),
+    (' x( ',       'angry'),
+    ('x-(',        'angry'),
+    (':angry:',    'angry'),
+    (' :x ',       'angry'),
+    (':-x',        'angry'),
+    (':mad:',      'angry'),
+    (' 8) ',       'cool'),
+    ('8-)',        'cool'),
+    (' B) ',       'cool'),
+    ('B-)',        'cool'),
+    (':cool:',     'cool'),
+    (' :D ',       'grin'),
+    (':-D',        'grin'),
+    (':grin:',     'grin'),
+    ('8-o',        'surprised'),
+    (' :o ',       'surprised'),
+    (':-0',        'surprised'),
+    ('8-0:',       'surprised'),
+    (':shock:',    'surprised'),
+    (':eek:',      'surprised'),
+    (':|',         'displeased'),
+    (' :/ ',       'displeased'),
+    (':-/',        'displeased'),
+    (':thumbs:',   'thumbsup'),
+    (':thumbsup:', 'thumbsup'),
+    (':devil:',    'devil'),
+    (':twisted:',  'devil'),
+    (':beer:',     'beer'),
+    (':cry:',      'cry'),
+    (":'(",        'cry'),
+    (":'-(",       'cry'),
+    (':laugh:',    'laugh'),
+    (':lol:',      'laugh'),
+    ('^^',         'laugh'),
+    ('^_^',        'laugh'),
+)
 
 
 def clean_text(value, topic=False):
-	""" 
-	Clean initial post.
-	Strips unacceptable HTML and replaces "profane" words with more suitable ones.
-	If topic, strips all tags from topic title.
-	Otherwise, uses htmlfilter to strip all but whitelisted html
-	Replaces earlier htmlFilter/happy_post functionality, and
-	splits functionality for raw post and formatted version.
-	""" 	
-	for key, val in bad_word_replacements.items():
-		value = value.replace(key, val)
-	#if topic:
-	#	cleaned = strip_tags(value)
-	#else:
-	cleaned = htmlfilter.check_tags(value)
-	return cleaned
-
-
+    """
+    Replaces "profane" words with more suitable ones.
+    Uses bleach to strip all but whitelisted html.
+    Converts bbcode to Markdown
+    """
+    # Clean bad words
+    for x in bad_word_replacements:
+        value = value.replace(x[0], x[1])
+    # Convert BBCode to markdown
+    for bbset in bbcode_replacements:
+        p = re.compile(bbset[0], re.DOTALL)
+        value = p.sub(bbset[1], value)
+    bleached = bleach.clean(value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True)
+    # because we want to retain markdown quotes, 
+    # and we'll be running bleach again in format_post.
+    bleached = bleached.replace('&gt;', '>').replace('&amp;', '&')
+    return bleached
 
 
 def format_post(value):
-	"""
-	Takes cleaned text from above and creates formatted, web-friendly version.
-	Converts bbcode, markdown, smilies, etc. and converts raw links to clickable (and truncated, if necessary)
-	TO-DO: convert linebreaks
-	"""
-	# convert raw urls
-	value = urlizetrunc(value, 30)
-	# convert attribute-carrying BBcode URL tags
-	tags = findall( r'(?xs)\[url=(.*?)\](.*?)\[/url]''', value)
-	for i in tags:
-		value = value.replace('[url=%s]%s[/url]' % (i[0], i[1]), '<a href="%s">%s</a>' % (i[0], i[1]))
-	# convert  attribute-carrying BBcode IMG tags
-	tags = findall( r'(?xs)\[img\](.*?)\[/img]''', value)
-	tags += findall( r'(?xs)\[IMG\](.*?)\[/IMG]''', value)
-	for i in tags:
-		if not len(i) < 3 and i[0:4] == 'http':
-			value = value.replace('[img]%s[/img]' % i, '<img src="%s" alt="">' % i)
-			value = value.replace('[IMG]%s[/IMG]' % i, '<img src="%s" alt="">' % i)
-	# handle other replacements
-	for key, val in formatting_replacements.items():
-		value = value.replace(key, val)
-	# and finally, apply markdown
-	value = markdown.markdown(value)
-	return value
+    """
+    Takes cleaned text from above and creates HTML-formatted, web-friendly version.
+    - converts links to images and video to actual media objects.
+    - Make raw links clickable (and truncated, if necessary).
+    - Converts smilies and markdown to valid HTML.
+    _ Bleaches output (again) to catch any stray HTML inserted by markdown.
+
+    TO-DO: convert linebreaks
+    """
+    # convert media links
+    value = convert_links(value)
+    value = urlizetrunc(value, 30)
+
+    for x in emoticon_replacements:
+        value = value.replace(x[0], '<span class="emoticon-%s"></span>' % x[1])
+
+    markedup = markdown.markdown(value).replace('</p>\n<p>', '</p><p>')
+    with_linebreaks = linebreaks(markedup)
+    bleached = bleach.clean(with_linebreaks, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True)
+    return mark_safe(bleached)
+
+
+def update_post_relations(user, topic, deleting=False):
+    """
+    helper function to update user post count and parent topic post_count.
+    """
+    if deleting:
+        user.post_count = user.post_count - 1
+    else:
+        user.post_count += 1
+    user.save(update_fields=['post_count'])
+
+    topic.modified     = datetime.datetime.now()
+    topic.modified_int = time.time()
+    topic.post_count   = topic.post_set.count()
+    topic.save(update_fields=['modified', 'modified_int', 'post_count', 'page_count'])
+
+
+def convert_links(text, trim_url_limit=None, nofollow=False, autoescape=False):
+    """
+    Finds URLs in text and attempts to handle correctly.
+    Heavily based on django.utils.html.urlize
+    With the additions of attempting to embed media links, particularly images.
+
+    Works on http://, https://, www. links, and also on links ending in one of
+    the original seven gTLDs (.com, .edu, .gov, .int, .mil, .net, and .org).
+
+    Links can have trailing punctuation (periods, commas, close-parens) and
+    leading punctuation (opening parens) and it'll still do the right thing.
+
+    """
+
+    safe_input = isinstance(text, SafeData)
+    words = word_split_re.split(force_text(text))
+    for i, word in enumerate(words):
+        if '.' in word or ':' in word:
+            # Deal with punctuation.
+            lead, middle, trail = '', word, ''
+            for punctuation in TRAILING_PUNCTUATION:
+                if middle.endswith(punctuation):
+                    middle = middle[:-len(punctuation)]
+                    trail = punctuation + trail
+            for opening, closing in WRAPPING_PUNCTUATION:
+                if middle.startswith(opening):
+                    middle = middle[len(opening):]
+                    lead = lead + opening
+                # Keep parentheses at the end only if they're balanced.
+                if (middle.endswith(closing)
+                    and middle.count(closing) == middle.count(opening) + 1):
+                    middle = middle[:-len(closing)]
+                    trail = closing + trail
+
+            # Make URL we want to point to.
+            url = None
+            if simple_url_re.match(middle):
+                url = smart_urlquote(middle)
+            elif simple_url_2_re.match(middle):
+                url = smart_urlquote('http://%s' % middle)
+            elif not ':' in middle and simple_email_re.match(middle):
+                local, domain = middle.rsplit('@', 1)
+                try:
+                    domain = domain.encode('idna').decode('ascii')
+                except UnicodeError:
+                    continue
+            if url:
+                u = url.lower()
+                if autoescape and not safe_input:
+                    lead, trail = escape(lead), escape(trail)
+                    url = escape(url)
+
+                # Photos
+                if u.endswith('.jpg') or u.endswith('.gif') or u.endswith('.png'):
+                    middle = '<img src="%s">' % url
+
+                # Youtube
+                #'https://www.youtube.com/watch?v=gkqXgaUuxZg'
+                elif 'youtube.com/watch' in url:
+                    parsed = urlparse.urlsplit(url)
+                    query  = urlparse.parse_qs(parsed.query)
+                    token  = query.get('v')
+                    if token and len(token) > 0:
+                        middle = '<iframe src="http://www.youtube.com/embed/%s" height="320" width="100%%"></iframe>' % token[0]
+                    else:
+                        middle = url
+                elif 'youtu.be/' in url:
+                    try:
+                        token = url.rsplit('/', 1)[1]
+                        middle = '<iframe src="http://www.youtube.com/embed/' + token + '" height="320" width="100%%"></iframe>'
+                    except IndexError:
+                        middle = url
+
+                words[i] = mark_safe('%s%s%s' % (lead, middle, trail))
+            else:
+                if safe_input:
+                    words[i] = mark_safe(word)
+                elif autoescape:
+                    words[i] = escape(word)
+        elif safe_input:
+            words[i] = mark_safe(word)
+        elif autoescape:
+            words[i] = escape(word)
+    return ''.join(words)
+
+
+def embed_video(url):
+    return '<iframe width="100%" height="320" src="%s" frameborder="0" allowfullscreen></iframe>' % url

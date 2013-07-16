@@ -1,80 +1,17 @@
 {% extends 'base.html' %}
-{% load cache sponsorlist guitar_tags thumbnail event_tags fretboard_tags %}
+{% load cache thumbnail fretboard_tags %}
 {% block appcache %}{% endblock %}
-{% block title %}{{ site_name }} {% endblock %}
+{% block title %}{{ site_name }} Forums {% endblock %}
 
 {% block extrahead %}
-	<link rel="stylesheet" href="/media/css/sections/fretboard.css?v=1">
-	{% if user.is_authenticated %}
-		<link rel="stylesheet" type="text/css" href="/media/markitup/sets/markdown-simple/style_2012.css?v=3">
-	{% endif %}
-{% endblock %}
-
-{% block extrascript %}
-  	<script src="/media/markitup/jquery.markitup.js"></script>
-	<script src="/media/markitup/sets/markdown-simple/set.js?v=4"></script>
-  	<script src="/media/js/sections/forum.js?v=2"></script>
-  	<script src ="/media/js/libs/lscache.js"></script>
-  	<script>
-  	 if (Modernizr.localstorage) {
-		var new_topic = {% firstof request.GET.new_topic 'null' %}
-		var new_post  = {% firstof request.GET.new_post 'null' %}
-		var viewed    = lscache.get('viewed')
-		var topics    = lscache.get('topics')
-		
-		{% if user.is_superuser %}
-		if (new_post != null) {
-		}
-		{% endif %}
-		
-		if (!topics) {
-			topics = [];
-		}
-		// new topics
-		if (new_topic != null && $.inArray(new_topic, topics) == -1) {
-			topics.push(new_topic);
-			lscache.set('topics', topics)
-		}
-		// new posts
-		if (new_post != null && $.inArray(new_post, topics) == -1) {
-			topics.push(new_post);
-			lscache.set('topics', topics)
-		}
-		if (topics.length > 201){
-			topics.splice(0,1);
-			lscache.set('topics', topics)
-		}
-		if (topics != null) {
-			var topics_html = '<a href="/forum/my-topics/" id="recent_topics_trigger"><span class="right">'+ topics.length + '</span>Your recent topics</a></li>';
-			var recent_topics = $('#recent_topics');
-			recent_topics.html(topics_html);
-			$('body').append("<form method='post' action='/forum/my-topics/' id='topics_form'>{% csrf_token %}<input type='hidden' name='topics' value='"+ topics +"'></form>");
-			
-			$(recent_topics).click(function(e) {
-				e.preventDefault();
-				$('#topics_form').submit();
-			})
-		}
-		
-		if (viewed != null) {
-			var recent_viewed = '<li><a href="/forum/recently-viewed/" id="recent_viewed"><span class="right">'+ viewed.length + '</span>Recently viewed</a></li>';
-			var viewedform =     "<form method='post' action='/forum/recently-viewed/' id='viewedform'>{% csrf_token %}<input type='hidden' name='viewed' value='"+ viewed +"'></form>";
-			$('#recent_topics').after(recent_viewed);
-			$('body').append(viewedform);
-			
-			$('#recent_viewed').live('click', function(e) {
-				e.preventDefault();
-				$('#viewedform').submit();
-			});
-		}
-	}
-  	</script>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/fretboard.css">
 {% endblock %}
 
 {% block bodyid %}board{% endblock %}
-{% block breadcrumbs %}
-	{{ site_name }}
-	{% block announcement %}{% endblock %}
+
+{% block messages %}
+  {% block announcement %}{% endblock %}
+  {{ block.super }}
 {% endblock %}
 
 {% block forum_nav %}
@@ -94,16 +31,36 @@
           <p class="note meta">Note: Topic search is much faster. Probably works better, too.</p>
         </form>	
 	{% endif %}
-	<select class="url_selector">
-	<option value="">Jump to...</option>
-		{% get_forum_list as forum_list %}{% regroup forum_list by category__name as forum_names %}
-		{% for c in forum_names %}
-			<optgroup label="{{ c.grouper }}">
-			  	{% for f in c.list %}
-       			<option value="/forum/{{ f.slug }}">{{ f.name }}</option>
-	       	{% endfor %}
-	      </optgroup>
-		{% endfor %}
-       	</select>
+    <select class="url-selector">
+      <option value="">Jump to...</option>
+      {% get_forum_list as forum_list %}
+      {% regroup forum_list by category__name as forum_names %}
+      {% for c in forum_names %}
+        <optgroup label="{{ c.grouper }}">
+          {% for f in c.list %}
+            <option value="{% url 'topic_list' f.slug %}">{{ f.name }}</option>
+          {% endfor %}
+        </optgroup>
+      {% endfor %}
+    </select>
 		</li> 
+{% endblock %}
+
+
+{% block extrascript %}
+  <script src="{{ STATIC_URL }}js/gp_markitup-ck.js"></script>
+  <script src ="/media/js/libs/lscache.js"></script>
+  <script>
+    {% block init_forum_js %}{% endblock %}
+    {% if user.auto_load_forum %}
+      var page = {% firstof page 1 %};
+      var original_page = page;
+      var prev_page = original_page - 1;
+      var loadable = true;
+      var current_page = $('span.current_page');
+      var loaded = [page];
+      var page_max = {{ page_obj.paginator.num_pages }} -1;
+    {% endif %}
+  </script>
+  <script src="{{ STATIC_URL }}js/fretboard.js"></script>
 {% endblock %}

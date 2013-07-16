@@ -2,9 +2,14 @@ from django.conf import settings
 from django.db import models
 from django.db.models import signals
 
-from fretboard.signals import update_forum_votes
+from .signals import update_forum_votes
+from .helpers import clean_text, format_post
+
+
 from sorl.thumbnail.fields import ImageWithThumbnailsField
 from voting.models import Vote
+
+UserModel = getattr(settings, "AUTH_USER_MODEL", "auth.User")
 
 
 class Category(models.Model):
@@ -45,10 +50,10 @@ class Forum(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('forum_topic_list', [str(self.slug)])
+        return ('topic_list', [str(self.slug)])
 
     def get_recent(self):
-        return self.topic_set.values().order_by('-id')[:3]
+        return self.topic_set.all().order_by('-id')[:3]
 
 
 class Topic(models.Model):
@@ -67,10 +72,11 @@ class Topic(models.Model):
     is_sticky        = models.BooleanField(blank=True, default=False)
     is_locked        = models.BooleanField(blank=True, default=False)
 
+    user             = models.ForeignKey(UserModel, blank=True, null=True, editable=False)
     author           = models.CharField(max_length=255, blank=True)
-    post_count       = models.PositiveIntegerField(default=1)
+    post_count       = models.PositiveIntegerField(default=1, editable=False)
     lastpost         = models.CharField(max_length=255, verbose_name="Last Post", blank=True)
-    latest_post      = models.ForeignKey('fretboard.Post', blank=True, null=True, related_name="latest_post")
+    latest_post      = models.ForeignKey('fretboard.Post', blank=True, null=True, related_name="latest_post", editable=False)
     lastpost_author  = models.CharField(max_length=255)
     page_count       = models.PositiveIntegerField(default=1)
     permalink        = models.CharField(max_length=255, blank=True)
@@ -85,21 +91,32 @@ class Topic(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Saves page count locally on the object for quick reference,
+        Save page count locally on the object for quick reference,
         but only after the first save.
         """
         if self.id:
             self.page_count = self.get_page_max()
             if not self.permalink:
                 self.permalink = self.get_absolute_url()
-        super(Topic, self).save()
+        super(Topic, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
+        """
+        Returns full url for topic, with page number.
+        Also used to create static permalink
+        """
+        if self.permalink:
+            return self.permalink
         return "%spage1/" % (self.get_short_url())
 
     @models.permalink
     def get_short_url(self):
+        """ Returns short version of topic url (without page number) """
         return ('post_short_url', [self.forum.slug, self.slug, str(self.id)])
+
+    def get_last_url(self):
+        """ Returns link to last page of topic """
+        return '%spage%s/' % (self.get_short_url(), self.get_page_max())
 
     def get_page_max(self):
         page_by        = settings.PAGINATE_BY
@@ -113,7 +130,15 @@ class Topic(models.Model):
         return self.post_set.latest('id').post_date
 
     def get_latest_post(self):
-        return self.post_set.values('id', 'post_date', 'author_name', 'post_date_int').latest('id')
+        """
+        Attempts to get most recent post in a topic.
+        Returns none if it fails.
+        """
+        try:
+            latest = self.post_set.values('id', 'post_date', 'author_name', 'post_date_int').latest('id')
+        except:
+            latest = None
+        return latest
 
     def get_score(self):
         return Vote.objects.get_score(self)['score']
@@ -126,7 +151,7 @@ class Post(models.Model):
     topic          = models.ForeignKey(Topic)
     text           = models.TextField()
     text_formatted = models.TextField(blank=True)
-    author         = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author         = models.ForeignKey(UserModel)
     author_name    = models.CharField(max_length=255, verbose_name="Author Preferred Name", blank=True, null=True)
     avatar         = models.CharField(max_length=255, verbose_name="Author Avatar", blank=True, null=True)
     post_date      = models.DateTimeField(auto_now_add=True)
@@ -137,11 +162,14 @@ class Post(models.Model):
         upload_to='img/board_pics/%Y/', blank=True, null=True,
         thumbnail={'size': (700, 700)},
         extra_thumbnails={
-        'icon': {'size': (50, 75), 'options': {'autocrop': True, 'crop': (0, -0), 'upscale': True}},
-        'mobile': {'size': (480, 480)},
+            'icon': {
+                'size': (50, 75),
+                'options': {'autocrop': True, 'crop': (0, -0), 'upscale': True}
+            },
+            'mobile': {'size': (540, 540)},
         },
     )
-    topic_page     = models.IntegerField(blank=True, null=True)
+    topic_page     = models.IntegerField(blank=True, null=True, default=1)
     votes          = models.IntegerField(default=0, blank=True, null=True)
 
     class Meta:
@@ -151,6 +179,15 @@ class Post(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        """
+        Save page count locally on the object for quick reference,
+        but only after the first save.
+        """
+        self.text = clean_text(self.text)
+        self.text_formatted = format_post(self.text)
+        super(Post, self).save(*args, **kwargs)
 
     def get_score(self):
         return Vote.objects.get_score(self)['score']

@@ -53,6 +53,7 @@ class TestFretboardGeneralViews(TestCase):
         self.assertTrue('page' in resp.context)
         self.assertTrue('forum_slug' in resp.context)
         self.assertTrue('forum_name' in resp.context)
+        self.assertTrue('form' in resp.context)
 
     def test_topic_search(self):
         """
