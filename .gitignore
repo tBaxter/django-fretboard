@@ -4,3 +4,5 @@ fretboard/views/.DS_Store
 fretboard/templatetags/.DS_Store
 
 *.pyc
+
+.DS_Store
