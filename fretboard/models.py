@@ -5,8 +5,6 @@ from django.db.models import signals
 from .signals import update_forum_votes
 from .helpers import clean_text, format_post
 
-
-from sorl.thumbnail.fields import ImageWithThumbnailsField
 from voting.models import Vote
 
 UserModel = getattr(settings, "AUTH_USER_MODEL", "auth.User")
@@ -157,18 +155,8 @@ class Post(models.Model):
     post_date      = models.DateTimeField(auto_now_add=True)
     post_date_int  = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
     quote          = models.ForeignKey('self', null=True, blank=True)
-
-    image          = ImageWithThumbnailsField(
-        upload_to='img/board_pics/%Y/', blank=True, null=True,
-        thumbnail={'size': (700, 700)},
-        extra_thumbnails={
-            'icon': {
-                'size': (50, 75),
-                'options': {'autocrop': True, 'crop': (0, -0), 'upscale': True}
-            },
-            'mobile': {'size': (540, 540)},
-        },
-    )
+    # to do... use contentImage?
+    image          = models.ImageField(upload_to='img/fretboard/%Y/', blank=True, null=True)
     topic_page     = models.IntegerField(blank=True, null=True, default=1)
     votes          = models.IntegerField(default=0, blank=True, null=True)
 
