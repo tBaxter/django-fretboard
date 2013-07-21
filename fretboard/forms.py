@@ -1,12 +1,29 @@
 from django import forms
+from django.conf import settings
 
 from .models import Topic, Post
+
+placeholder = getattr(settings, "FORUM_POST_PLACEHOLDER", "Be nice.")
+
+
 class AddTopicForm(forms.ModelForm):
-	name  = forms.CharField(widget=forms.TextInput(attrs={'tabindex':'1', 'placeholder':"Topic name"}))
-	text  = forms.CharField(widget=forms.Textarea(attrs={'tabindex':'2'}))
-	
-	class Meta:
-		model = Topic
+    """
+    Form for adding a new topic.
+    """
+    text  = forms.CharField(widget=forms.Textarea(attrs={'tabindex': '2', 'placeholder': placeholder}))
+    image = forms.CharField(widget=forms.FileInput(), required=False)
+
+    class Meta:
+        model = Topic
+        fields = ['name', 'image', 'text']
+        widgets = {
+            'forum': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AddTopicForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs = {'tabindex': '1'}
+
 
 class PostForm(forms.ModelForm):
     """
