@@ -15,8 +15,8 @@ from fretboard.forms import AddTopicForm, PostForm
 from fretboard.helpers import update_post_relations
 from fretboard.models import Forum, Topic, Post
 
-now        = datetime.datetime.now()
-pag_by     = settings.PAGINATE_BY
+now = datetime.datetime.now()
+PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
 
 
 @login_required
@@ -80,7 +80,7 @@ def add_post(request, t_slug, t_id, p_id = False):  # topic slug, topic id, post
     form = PostForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
-        if topic.post_set.count() % pag_by == 0:
+        if topic.post_set.count() % PAGINATE_BY == 0:
             topic_page = topic.page_count + 1
         else:
             topic_page = topic.page_count
@@ -172,7 +172,7 @@ def delete_post(request, post_id, topic_id):
         post.delete()
         update_post_relations(request.user, topic, deleting=True)
         topic_posts = topic.post_set.count()
-        pmax = (topic_posts / pag_by) + 1
+        pmax = (topic_posts / PAGINATE_BY) + 1
 
         # if no posts are left, delete topic.
         if topic_posts == 0:

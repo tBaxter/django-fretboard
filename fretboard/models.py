@@ -8,6 +8,7 @@ from .helpers import clean_text, format_post
 from voting.models import Vote
 
 UserModel = getattr(settings, "AUTH_USER_MODEL", "auth.User")
+PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
 
 
 class Category(models.Model):
@@ -117,7 +118,7 @@ class Topic(models.Model):
         return '%spage%s/' % (self.get_short_url(), self.get_page_max())
 
     def get_page_max(self):
-        page_by        = settings.PAGINATE_BY
+        page_by        = PAGINATE_BY
         postcount      = self.post_set.count()
         max_pages      = (postcount / page_by) + 1
         if postcount % page_by == 0:

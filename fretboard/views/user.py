@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -10,7 +9,6 @@ from fretboard.models import Topic
 from fretboard.views.general import BaseTopicList
 
 UserModel      = get_user_model()
-pag_by         = settings.PAGINATE_BY
 last_seen_time = None
 
 

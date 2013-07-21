@@ -10,7 +10,7 @@ from fretboard.models import Forum, Topic, Post
 from fretboard.forms import PostForm
 
 now        = datetime.datetime.now()
-pag_by     = settings.PAGINATE_BY
+PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
 
 
 class BaseTopicList(ListView):
@@ -20,7 +20,7 @@ class BaseTopicList(ListView):
     Otherwise, it goes to the topic wrapper.
     """
     template_name = 'fretboard/topic_wrapper.html'
-    paginate_by = settings.PAGINATE_BY
+    paginate_by = PAGINATE_BY
     context_object_name = 'topics'
 
     def dispatch(self, request, *args, **kwargs):
@@ -113,7 +113,7 @@ class PostList(ListView):
     Otherwise, it goes to the post wrapper.
     """
     template_name = 'fretboard/post_wrapper.html'
-    paginate_by = settings.PAGINATE_BY
+    paginate_by = PAGINATE_BY
     context_object_name = 'posts'
 
     def get_queryset(self):
@@ -138,7 +138,7 @@ class PostList(ListView):
         new_post_id  = None
 
         if start_number > 1:
-            start_number = (settings.PAGINATE_BY * (start_number - 1)) + 1
+            start_number = (PAGINATE_BY * (start_number - 1)) + 1
 
         if 'last_seen' in self.request.session:
             newposts = self.get_queryset().filter(post_date__gt=self.request.session['last_seen']).values_list('id', flat=True)

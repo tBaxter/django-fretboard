@@ -15,6 +15,8 @@ now = datetime.datetime.now()
 one_day_ago     = now - datetime.timedelta(days=1)
 one_day_ago_int = calendar.timegm(one_day_ago.utctimetuple())
 
+PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
+
 register = template.Library()
 
 
@@ -61,7 +63,7 @@ def topic_quick_links(context, topic, latest, last_seen_time):
         hits = topic.post_count - 1
         if hits < 1:
             hits = 1
-        pages = hits // settings.PAGINATE_BY + 1
+        pages = hits // PAGINATE_BY + 1
 
     # determine if we need to show new link.
     if latest and latest.get('post_date_int') and latest['post_date_int'] > last_seen_time:
