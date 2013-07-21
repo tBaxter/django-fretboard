@@ -1,4 +1,4 @@
-{% load humanize typogrify fretboard_tags cache voting_tags %}
+{% load humanize typogrify_tags fretboard_tags cache voting_tags %}
 
 {% with request.session.last_seen_timestamp as new_time %}
   {% for topic in topics %}

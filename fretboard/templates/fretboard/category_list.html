@@ -1,4 +1,4 @@
-{% extends "fretboard/base.html" %}{% load cache typogrify %}
+{% extends "fretboard/base.html" %}{% load cache typogrify_tags %}
 {% block content %}
   <h1>{{ site_name }}</h1>
   {% cache 600 forum-cat-list 10 %}
