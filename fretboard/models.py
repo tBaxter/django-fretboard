@@ -26,7 +26,10 @@ class Category(models.Model):
         return self.name
 
     def get_forum_names(self):
-        return self.forum_set.values('forum_slug', 'forum_name')
+        """
+        Return forum names and slugs for the current category.
+        """
+        return self.forum_set.values('slug', 'name')
 
 
 class Forum(models.Model):
