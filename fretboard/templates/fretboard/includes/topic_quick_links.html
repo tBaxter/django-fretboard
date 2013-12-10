@@ -1,0 +1,21 @@
+<div class="button-bar thinline divided right">
+  {% if user.is_staff and perms.fretboard.can_delete_topic %}
+    <span class="tool_trigger">⚙</span>
+    <span class="post-admin">
+      {% if topic.is_sticky %}
+        <a href="{% url 'mod_topic' topic.id forum_slug %}?act=unstick" data-confirm="Unstick topic?">Unstick
+        </a>
+      {% else %}
+        <a href="{% url 'mod_topic' topic.id forum_slug %}?act=stick" data-confirm="Stick topic?" title="Sticky">📌</a>
+      {% endif %}
+      <a href="{% url 'mod_topic' topic.id forum_slug %}?act=delete" data-confirm="Delete topic?" title="Delete">❌</a>
+      {% if topic.is_locked %}
+        <a href="{% url 'mod_topic' topic.id forum_slug %}?act=unlock" data-confirm="Unlock topic?" title="Unlock">🔓</a>
+      {% else %}
+        <a href="{% url 'mod_topic' topic.id forum_slug %}?act=lock" data-confirm="Lock topic" title="Lock">🔒</a>
+      {% endif %}
+      <a href="{% url 'mod_topic' topic.id forum_slug %}?act=move" title="Move">⇨</a>
+    </span>
+  {% endif %}
+  {{ output_text|safe }}
+</div>
