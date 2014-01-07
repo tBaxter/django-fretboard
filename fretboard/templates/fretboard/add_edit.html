@@ -3,7 +3,16 @@
 {% block title %} {{ form_title }}: {% endblock%}
 
 {% block content %}
+  <h2 class="kicker">
+    <a href="{% url 'fretboard_index' %}">{{ site.name }} Forums</a>
+  </h2>
 	<h1>{{ form_title }}</h1>
+  {% if admin_msg %}
+    <h3 class="alert">
+      {{ admin_msg|safe }}
+    </h3>
+  {% endif %}
+
   {% if quote %}
     <div id="comment-list">
       <article>
@@ -13,7 +22,8 @@
       </article>
     </div>
   {% endif %}
-  <form method="post" action="." id="reply" class="boxedform" enctype="multipart/form-data">
+
+  <form method="post" action="." class="boxedform" enctype="multipart/form-data">
     {% include "fretboard/includes/post_form.html" %}
   </form>
 {% endblock %}

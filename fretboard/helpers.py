@@ -1,7 +1,9 @@
-import datetime
 import re
 import time
 import urlparse
+
+from datetime import datetime
+
 
 import bleach
 import markdown
@@ -168,10 +170,9 @@ def update_post_relations(user, topic, deleting=False):
         user.post_count += 1
     user.save(update_fields=['post_count'])
 
-    topic.modified     = datetime.datetime.now()
+    topic.modified     = datetime.now()
     topic.modified_int = time.time()
-    topic.post_count   = topic.post_set.count()
-    topic.save(update_fields=['modified', 'modified_int', 'post_count', 'page_count'])
+    topic.save(update_fields=['modified', 'modified_int', 'page_count'])
 
 
 def convert_links(text, trim_url_limit=None, nofollow=False, autoescape=False):

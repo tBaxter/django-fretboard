@@ -2,41 +2,45 @@
 # -*- coding: utf-8 -*-
 
 import calendar
-import datetime
+from datetime import datetime, timedelta
 
 from django import template
-from django.conf import settings
 
+from fretboard.helpers import clean_text, format_post as format_post_text
 from fretboard.models import Forum, Topic
-from fretboard.helpers import clean_text
-from fretboard.helpers import format_post as format_post_text
+from fretboard.settings import PAGINATE_BY
 
-now = datetime.datetime.now()
-one_day_ago     = now - datetime.timedelta(days=1)
-one_day_ago_int = calendar.timegm(one_day_ago.utctimetuple())
 
-PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
+def yesterday():
+    return datetime.now() - timedelta(days=1)
+
+def yesterday_timestamp():
+    return calendar.timegm(yesterday().utctimetuple())
 
 register = template.Library()
 
 
 @register.assignment_tag
-def get_new_topics_count(last_seen=one_day_ago, for_member=False):
+def get_new_topics_count(last_seen=None, for_member=False):
     """
     Returns count of new topics since last visit, or one day.
     {% get_new_topics_count as new_topic_count %}
     """
+    if not last_seen:
+        last_seen = yesterday()
     if not for_member:
         return Topic.objects.filter(created__gt=last_seen).count()
     return Topic.objects.filter(modified__gt=last_seen, user__id=for_member).count()
 
 
 @register.assignment_tag
-def get_active_topics_count(last_seen_timestamp=one_day_ago_int):
+def get_active_topics_count(last_seen_timestamp=None):
     """
     Returns count of new topics since last visit, or one day.
     {% get_active_topics_count as active_topic_count %}
     """
+    if not last_seen_timestamp:
+        last_seen_timestamp = yesterday_timestamp()
     return Topic.objects.filter(modified_int__gt=last_seen_timestamp).count()
 
 

@@ -7,7 +7,7 @@
       {% for cat in cat_list %}
         <section>
           <h1>{{cat.grouper}}</h1>
-          <dl class="fcatlist">
+          <dl>
             {% for forum in cat.list %}
               <dt>
                 <a href="{% url 'topic_list' forum.slug %}">{{ forum.name }}</a>

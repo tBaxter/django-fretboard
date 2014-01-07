@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from fretboard.models import Forum, Topic, Post
 
@@ -40,4 +40,4 @@ def moderate(request, topic_id, forum_slug):
             messages.error(request, "We couldn't find an action: %s" % action)
         else:
             messages.error(request, "You don't have permission to %s topics." % action)
-    return HttpResponseRedirect("/forum/{0}/".format(forum_slug))
+    return redirect("/forum/{0}/".format(forum_slug))

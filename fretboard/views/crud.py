@@ -1,9 +1,7 @@
 # Create, Remove, Update, Delete views
 
-import datetime
 import time
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -14,9 +12,7 @@ from django.utils.html import strip_tags
 from fretboard.forms import AddTopicForm, PostForm
 from fretboard.helpers import update_post_relations
 from fretboard.models import Forum, Topic, Post
-
-now = datetime.datetime.now()
-PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
+from fretboard.settings import PAGINATE_BY
 
 
 @login_required
