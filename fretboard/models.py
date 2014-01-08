@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import signals
 from django.utils.functional import cached_property
+
+from easy_thumbnails.fields import ThumbnailerImageField
+from tango_shared.models import set_img_path
+from voting.models import Vote
 
 from .helpers import clean_text, format_post
 from .managers import TopicManager
 from .settings import PAGINATE_BY
-
-from voting.models import Vote
-
 
 
 class Category(models.Model):
@@ -161,14 +161,14 @@ class Post(models.Model):
     text           = models.TextField()
     text_formatted = models.TextField(blank=True)
     author         = models.ForeignKey(get_user_model())
-    author_name    = models.CharField(max_length=255, verbose_name="Author Preferred Name", blank=True, null=True)
     post_date      = models.DateTimeField(auto_now_add=True)
     post_date_int  = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
     quote          = models.ForeignKey('self', null=True, blank=True)
-    # to do... use contentImage?
-    image          = models.ImageField(upload_to='img/fretboard/%Y/', blank=True, null=True)
-    topic_page     = models.IntegerField(blank=True, null=True, default=1)
-    votes          = models.IntegerField(default=0, blank=True, null=True)
+    image = ThumbnailerImageField(
+        upload_to = set_img_path,
+        help_text = "Image size should be a minimum of 720px and no more than 2000px (width or height)",
+        blank=True
+    )
 
     class Meta:
         get_latest_by = "id"
@@ -177,6 +177,16 @@ class Post(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+    @cached_property
+    def post_url(self):
+        """ 
+        Determine which page this post lives on 
+        """
+        topic = self.topic
+        topic_page = topic.post_set.filter(id__lt=self.id).count() / PAGINATE_BY + 1
+        return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
+
 
     def save(self, *args, **kwargs):
         """
@@ -194,5 +204,6 @@ class Post(models.Model):
     def avatar(self):
         return self.author.avatar.url
 
-
-signals.post_save.connect(update_forum_votes, sender=Vote)
+    @cached_property
+    def author_display_name(self):
+        return self.author.display_name

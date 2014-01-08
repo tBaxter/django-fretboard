@@ -12,7 +12,7 @@ from django.utils.html import strip_tags
 from fretboard.forms import AddTopicForm, PostForm
 from fretboard.helpers import update_post_relations
 from fretboard.models import Forum, Topic, Post
-from fretboard.settings import PAGINATE_BY
+from fretboard.settings import PAGINATE_BY, FORUM_BASE_NAME
 
 
 @login_required
@@ -40,8 +40,6 @@ def add_topic(request, forum_slug):
             topic            = instance,
             text             = request.POST['text'],
             author           = user,
-            author_name      = user.preferred_name,
-            avatar           = user.avatar,
             post_date_int    = current_time
         )
         if request.FILES:
@@ -50,7 +48,11 @@ def add_topic(request, forum_slug):
 
         return HttpResponseRedirect("/forum/%s/?new_topic=%s" % (forum_slug, instance.id))
 
-    return render(request, 'fretboard/add_edit.html', {'form': form, 'form_title': 'Add a topic'})
+    return render(request, 'fretboard/add_edit.html', {
+        'form': form,
+        'form_title': 'Add a topic',
+        'FORUM_BASE_NAME': FORUM_BASE_NAME
+    })
 
 
 @login_required
@@ -76,11 +78,6 @@ def add_post(request, t_slug, t_id, p_id = False):  # topic slug, topic id, post
     form = PostForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
-        if topic.post_set.count() % PAGINATE_BY == 0:
-            topic_page = topic.page_count + 1
-        else:
-            topic_page = topic.page_count
-
         # we're going to save this inital data now,
         # rather than on the model save()
         # because we only want to bother with this stuff one time
@@ -92,7 +89,6 @@ def add_post(request, t_slug, t_id, p_id = False):  # topic slug, topic id, post
         instance.author_name = user.preferred_name
         instance.avatar = user.avatar
         instance.post_date_int = current_time
-        instance.topic_page = topic_page
         instance.quote = q
         instance.save()
 
@@ -102,7 +98,8 @@ def add_post(request, t_slug, t_id, p_id = False):  # topic slug, topic id, post
     return render(request, 'fretboard/add_edit.html', {
         'form': form,
         'form_title': form_title,
-        'quote': q
+        'quote': q,
+        'FORUM_BASE_NAME': FORUM_BASE_NAME
     })
 
 

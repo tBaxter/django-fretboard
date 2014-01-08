@@ -1,12 +1,14 @@
 {% extends "fretboard/base.html" %}
 {% load paginator %}
-{% block title %}{{ site_name }}: {{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} | {% endblock%}
-{% block description %}{{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} on {{ block.super }}{% endblock%}
+
+{% block title %}{{ FORUM_BASE_NAME }}: {{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} | {% endblock %}
+
+{% block description %}{{ forum_name }}{% ifnotequal page 1 %} (page {{ page }}){% endifnotequal %} on {{ block.super }}{% endblock %}
 
 {% block bodyid %}topics{% endblock %}
 
 {% block content %}
-  {% if user.is_authenticated and can_add_topic and forum_slug %}
+  {% if authenticated_request and can_add_topic and forum_slug %}
     <a href="{% url 'add_topic' forum_slug %}" class="button right icon-add">
       Add A Topic
     </a>

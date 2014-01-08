@@ -1,16 +1,15 @@
 from django import forms
-from django.conf import settings
 
 from .models import Topic, Post
+from .settings import COMMENT_PLACEHOLDER
 
-placeholder = getattr(settings, "FORUM_POST_PLACEHOLDER", "Be nice.")
 
 
 class AddTopicForm(forms.ModelForm):
     """
     Form for adding a new topic.
     """
-    text  = forms.CharField(widget=forms.Textarea(attrs={'tabindex': '2', 'placeholder': placeholder}))
+    text  = forms.CharField(widget=forms.Textarea(attrs={'tabindex': '2', 'placeholder': COMMENT_PLACEHOLDER}))
     image = forms.CharField(widget=forms.FileInput(), required=False)
 
     class Meta:
@@ -33,9 +32,8 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['image', 'text']
         widgets = {
-            'text': forms.Textarea(attrs={'tabindex': '1', 'placeholder': placeholder}),
+            'text': forms.Textarea(attrs={'tabindex': '1', 'placeholder': COMMENT_PLACEHOLDER}),
             'topic': forms.HiddenInput(),
-            'topic_page': forms.HiddenInput(),
             'author': forms.HiddenInput(),
         }
 

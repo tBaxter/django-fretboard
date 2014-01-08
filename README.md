@@ -12,3 +12,10 @@ There are a few settings you may wish to override in your project's settings.py:
 * PAGINATE_BY: defaults to 25 
 * FORUM_BASE_NAME: defaults to site name
 * COMMENT_PLACEHOLDER: placeholder text for post box. Defaults to "be nice"
+
+
+### Requirements:
+
+* [Easy Thumbnails](http://easy-thumbnails.readthedocs.org/en/latest/)   
+* [Tango Shared Core](https://github.com/tBaxter/tango-shared-core)
+* [Django Voting](https://github.com/tBaxter/django-voting)

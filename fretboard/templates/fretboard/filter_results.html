@@ -45,8 +45,8 @@ mark {background:#ffc}
   {% for obj in object_list %}
   {% ifchanged obj.topic %}
     <h2>
-      <a href="{{ obj.topic.get_short_url }}page{{ obj.topic_page }}/#post{{ obj.id }}">
-        {{ obj.topic }}
+      <a href="{{ obj.post_url }}">
+        {{ obj.topic.name }}
       </a>
     </h2>
   {% endifchanged %}

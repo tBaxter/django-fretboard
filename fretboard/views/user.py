@@ -6,10 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 
 from fretboard.models import Topic
-from fretboard.views.general import BaseTopicList
-
-UserModel      = get_user_model()
-last_seen_time = None
+from .general import BaseTopicList
 
 
 class MemberTopics(BaseTopicList):
@@ -21,10 +18,12 @@ class MemberTopics(BaseTopicList):
     def dispatch(self, request, *args, **kwargs):
         user_arg = kwargs.get('user', None)
         if user_arg:
-            if user_arg.isdigit():  # we passed an ID
-                self.topic_user = get_object_or_404(UserModel, id=user_arg)
-            else:  # we passed a username
-                self.topic_user = get_object_or_404(UserModel, username=user_arg)
+            if user_arg.isdigit():
+                # we passed an ID
+                self.topic_user = get_object_or_404(get_user_model(), id=user_arg)
+            else:
+                # we passed a username
+                self.topic_user = get_object_or_404(get_user_model(), username=user_arg)
         else:
             self.topic_user = request.user
         if not self.topic_user:
