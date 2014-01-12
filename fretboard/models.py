@@ -79,13 +79,6 @@ class Topic(models.Model):
 
     user             = models.ForeignKey(get_user_model(), blank=True, null=True, editable=False)
     author           = models.CharField(max_length=255, blank=True)
-    post_count       = models.PositiveIntegerField(default=1, editable=False)
-    lastpost         = models.CharField(max_length=255, verbose_name="Last Post", blank=True)
-    latest_post      = models.ForeignKey('fretboard.Post', blank=True, null=True, related_name="latest_post", editable=False)
-    lastpost_author  = models.CharField(max_length=255)
-    page_count       = models.PositiveIntegerField(default=1)
-    permalink        = models.CharField(max_length=255, blank=True)
-    votes            = models.IntegerField(default=0, blank=True, null=True)
 
     objects = TopicManager()
 
@@ -96,25 +89,13 @@ class Topic(models.Model):
         db_table      = 'forum_topic'
         ordering      = ['-modified_int']
 
-    def save(self, *args, **kwargs):
-        """
-        Save page count locally on the object for quick reference,
-        but only after the first save.
-        """
-        if self.id:
-            self.page_count = self.get_page_max()
-            if not self.permalink:
-                self.permalink = self.get_absolute_url()
-        super(Topic, self).save(*args, **kwargs)
-
+    @cached_property
     def get_absolute_url(self):
         """
-        Returns full url for topic, with page number.
-        Also used to create static permalink
+        Returns URL to first page of topic.
+        Note that for any page within a topic, a canonical URL will be available.
         """
-        if self.permalink:
-            return self.permalink
-        return "%spage1/" % (self.get_short_url())
+        return "{0}page1/".format(self.get_short_url())
 
     @models.permalink
     def get_short_url(self):
@@ -123,18 +104,7 @@ class Topic(models.Model):
 
     def get_last_url(self):
         """ Returns link to last page of topic """
-        return '%spage%s/' % (self.get_short_url(), self.get_page_max())
-
-    def get_page_max(self):
-        page_by        = PAGINATE_BY
-        postcount      = self.post_set.count()
-        max_pages      = (postcount / page_by) + 1
-        if postcount % page_by == 0:
-            max_pages   = postcount / page_by
-        return max_pages
-
-    def get_mod_time(self):
-        return self.post_set.latest('id').post_date
+        return '{0}page{1}/'.format(self.get_short_url(), self.page_count)
 
     @cached_property
     def latest_post(self):
@@ -148,12 +118,24 @@ class Topic(models.Model):
             return None
 
     @cached_property
-    def score(self):
-        return Vote.objects.get_score(self)['score']
+    def page_count(self):
+        """
+        Get count of total pages
+        """
+        postcount = self.post_set.count()
+        max_pages = (postcount / PAGINATE_BY)
+        if postcount % PAGINATE_BY != 0:
+            max_pages += 1
+        return max_pages
 
     @cached_property
     def post_count(self):
         return self.post_set.count()
+
+    @cached_property
+    def votes(self):
+        return Vote.objects.get_score(self)['score']
+
 
 
 class Post(models.Model):
@@ -176,17 +158,7 @@ class Post(models.Model):
         db_table      = 'forum_post'
 
     def __unicode__(self):
-        return str(self.id)
-
-    @cached_property
-    def post_url(self):
-        """ 
-        Determine which page this post lives on 
-        """
-        topic = self.topic
-        topic_page = topic.post_set.filter(id__lt=self.id).count() / PAGINATE_BY + 1
-        return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
-
+        return unicode(self.id)
 
     def save(self, *args, **kwargs):
         """
@@ -197,12 +169,26 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
 
     @cached_property
-    def score(self):
+    def post_url(self):
+        """ 
+        Determine which page this post lives on within the topic
+        and return link to anchor within that page
+        """
+        topic = self.topic
+        topic_page = topic.post_set.filter(id__lt=self.id).count() / PAGINATE_BY + 1
+        return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
+
+    @cached_property
+    def votes(self):
+        """ Return vote score """
         return Vote.objects.get_score(self)['score']
 
     @cached_property
     def avatar(self):
-        return self.author.avatar.url
+        avatar_url = self.author.avatar.url
+        if not avatar_url:
+            avatar_url = '/img/avatars/default.jpg'
+        return avatar_url
 
     @cached_property
     def author_display_name(self):

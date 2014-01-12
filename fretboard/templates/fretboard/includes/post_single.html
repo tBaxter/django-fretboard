@@ -7,7 +7,7 @@
   <span class="avatar-hold">
     {% url 'view_profile_by_id' obj.author_id as author_url %}
     <a href="{{ author_url }}" rel="author">
-      <span class="avatar" data-deferred-load="{{ MEDIA_URL }}{% firstof obj.avatar '/img/avatars/default.jpg' %}">
+      <span class="avatar" data-deferred-load="{{ MEDIA_URL }}{{ obj.avatar }}">
       </span>
       {{ obj.author_name }}
     </a>
