@@ -30,6 +30,7 @@ def add_topic(request, forum_slug):
         instance.slug            = slugify(instance.name)
         instance.user            = user
         instance.author          = user.preferred_name
+        instance.lastpost_author = user.preferred_name
         instance.created_int     = current_time
         instance.modified_int    = current_time
         instance.save()

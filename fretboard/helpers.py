@@ -172,7 +172,7 @@ def update_post_relations(user, topic, deleting=False):
 
     topic.modified     = datetime.now()
     topic.modified_int = time.time()
-    topic.save(update_fields=['modified', 'modified_int', 'page_count'])
+    topic.save(update_fields=['modified', 'modified_int'])
 
 
 def convert_links(text, trim_url_limit=None, nofollow=False, autoescape=False):

@@ -18,7 +18,7 @@
             <!--googleoff: all-->
               <p>
                 {% if topic.created %} 
-                  <span class="meta">{{ topic.author|title|truncatechars:"30" }} started</span>
+                  <span class="meta">{{ topic.author_display_name|title|truncatechars:"30" }} started</span>
                   <time datetime="{{ topic.created|date:"Y-m-d\TH:i:00" }}">
                     {{ topic.created|naturaltime }}
                   </time>
@@ -28,14 +28,14 @@
           </section><!-- /.t -->
 
           <section class="last clearfix">
-            {% with topic.get_latest_post as latest %}
+            {% with topic.latest_post as latest %}
               
               {% topic_quick_links topic latest last_seen_time %}
               
               {% if topic.post_count > 1 %}
                 <p>
                   <span class="meta">
-                    {{ latest.author_name|title|truncatechars:"30" }} updated
+                    {{ latest.author_display_name|title|truncatechars:"30" }} updated
                   </span>
                   <time datetime="{{ latest.post_date|date:"Y-m-d\TH:i:00" }}" title="{{ latest.post_date }}">
                     {{ latest.post_date|naturaltime }}

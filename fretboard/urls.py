@@ -1,8 +1,6 @@
 from django.conf.urls import *
-from django.views.generic import ListView
 
-from fretboard.models import Forum
-from fretboard.views import *
+from .views import *
 
 
 urlpatterns = patterns('fretboard.views.moderate',
@@ -11,7 +9,6 @@ urlpatterns = patterns('fretboard.views.moderate',
     view='moderate',
     name='mod_topic'),
 )
-
 
 ### URLS for User
 urlpatterns += patterns('',
@@ -92,23 +89,32 @@ urlpatterns += patterns('',
     view=NewTopics.as_view(),
     name="new_24_hours_paginated"
   ),
-
-
+  # topic lists
   url(
     regex=r'^(?P<forum_slug>[-\w]+)/$',
     view=TopicList.as_view(),
     name="topic_list"
   ),
-  url(r'^(?P<forum_slug>[-\w]+)/page(?P<page>[0-9]+)/$', TopicList.as_view(),    name="topic_list_paginated"),
-  url(r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/page(?P<page>[0-9]+)/$', PostList.as_view(), name="post_list_paginated"),
-  url(r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/$', PostList.as_view(), name="post_short_url"),
-)
-urlpatterns += patterns('',
-
-  # Forum index
-  url(r'^$', ListView.as_view(
-    queryset=Forum.objects.all().order_by('category'),
-    context_object_name="forums",
-    template_name="fretboard/category_list.html"
-  ), name='fretboard_index'),
+  url(
+    regex=r'^(?P<forum_slug>[-\w]+)/page(?P<page>[0-9]+)/$',
+    view=TopicList.as_view(),
+    name="topic_list_paginated"
+  ),
+  # post lists
+  url(
+    regex=r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/page(?P<page>[0-9]+)/$',
+    view=PostList.as_view(),
+    name="post_list_paginated"
+  ),
+  url(
+    regex=r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/$',
+    view=PostList.as_view(),
+    name="post_short_url"
+  ),
+  # category list/index
+  url(
+    regex=r'^$',
+    view=CategoryList.as_view(),
+    name='fretboard_index'
+  ),
 )

@@ -10,6 +10,22 @@ from fretboard.models import Forum, Topic, Post
 from fretboard.settings import PAGINATE_BY, FORUM_BASE_NAME
 
 
+class CategoryList(ListView):
+    """
+    Returns a list of Forums ordered by category.
+    """
+    template_name="fretboard/category_list.html"
+    context_object_name="forums"
+    queryset=Forum.objects.all().order_by('category')
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryList, self).get_context_data(**kwargs)
+        context.update({
+            'FORUM_BASE_NAME' : FORUM_BASE_NAME
+        })
+        return context
+
+
 class BaseTopicList(ListView):
     """
     Returns a paginated list of topics in a given forum.
@@ -35,9 +51,9 @@ class BaseTopicList(ListView):
     def get_context_data(self, **kwargs):
         context = super(BaseTopicList, self).get_context_data(**kwargs)
         context.update({
-            'lastseen_time' : self.request.session.get('last_seen', None),
-            'page'          : int(self.page),
-            'forum_name'    : FORUM_BASE_NAME
+            'lastseen_time'   : self.request.session.get('last_seen', None),
+            'page'            : int(self.page),
+            'FORUM_BASE_NAME' : FORUM_BASE_NAME
         })
         return context
 

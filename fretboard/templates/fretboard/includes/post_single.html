@@ -7,9 +7,9 @@
   <span class="avatar-hold">
     {% url 'view_profile_by_id' obj.author_id as author_url %}
     <a href="{{ author_url }}" rel="author">
-      <span class="avatar" data-deferred-load="{{ MEDIA_URL }}{{ obj.avatar }}">
+      <span class="avatar" data-deferred-load="{{ obj.avatar }}">
       </span>
-      {{ obj.author_name }}
+      {{ obj.author.preferred_name }}
     </a>
   </span>
   {% with obj.post_date as d %}
@@ -26,7 +26,7 @@
     {% if q %}
       <blockquote class="clearfix" cite="#post-{{ obj.id }}">
         {% if q.image %}
-          <figure data-deferred-load="{{ q.image.extra_thumbnails.mobile }}"></figure>
+          <figure data-deferred-load="{{ q.image.t_540u.url }}"></figure>
         {% endif %}
         {% firstof q.text_formatted|safe q.text|markdown %}
         <footer class="right"> &ndash; {{ q.author_name }}</footer>
@@ -34,7 +34,8 @@
     {% endif %}
   {% endwith %}
   {% if obj.image %}
-    <figure data-deferred-load="{{ obj.image.extra_thumbnails.mobile }}"></figure>
+    <figure data-deferred-load="{{ obj.image.t_540u.url }}">
+  </figure>
   {% endif %}
   {% firstof obj.text_formatted|safe obj.text|markdown %}
 </section>

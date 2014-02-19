@@ -88,8 +88,7 @@ class Topic(models.Model):
     class Meta:
         db_table      = 'forum_topic'
         ordering      = ['-modified_int']
-
-    @cached_property
+    
     def get_absolute_url(self):
         """
         Returns URL to first page of topic.
@@ -101,8 +100,9 @@ class Topic(models.Model):
     def get_short_url(self):
         """ Returns short version of topic url (without page number) """
         return ('post_short_url', [self.forum.slug, self.slug, str(self.id)])
-
-    def get_last_url(self):
+    
+    @cached_property
+    def last_url(self):
         """ Returns link to last page of topic """
         return '{0}page{1}/'.format(self.get_short_url(), self.page_count)
 
@@ -137,7 +137,6 @@ class Topic(models.Model):
         return Vote.objects.get_score(self)['score']
 
 
-
 class Post(models.Model):
     topic          = models.ForeignKey(Topic)
     text           = models.TextField()
@@ -146,6 +145,7 @@ class Post(models.Model):
     post_date      = models.DateTimeField(auto_now_add=True)
     post_date_int  = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
     quote          = models.ForeignKey('self', null=True, blank=True)
+
     image = ThumbnailerImageField(
         upload_to = set_img_path,
         help_text = "Image size should be a minimum of 720px and no more than 2000px (width or height)",
@@ -185,8 +185,9 @@ class Post(models.Model):
 
     @cached_property
     def avatar(self):
-        avatar_url = self.author.avatar.url
-        if not avatar_url:
+        try:
+            avatar_url = self.author.avatar.url
+        except ValueError: # catch avatar url does not exist
             avatar_url = '/img/avatars/default.jpg'
         return avatar_url
 

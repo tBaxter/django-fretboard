@@ -55,10 +55,6 @@ def topic_quick_links(context, topic, latest, last_seen_time):
     """
     output_text = u''
 
-    if not topic.post_count:
-        topic.post_count = topic.post_set.count()
-        topic.save(update_fields=['post_count', 'page_count'])
-
     pages = topic.page_count
     if not pages or pages == 0:
         hits = topic.post_count - 1
@@ -67,8 +63,8 @@ def topic_quick_links(context, topic, latest, last_seen_time):
         pages = hits // PAGINATE_BY + 1
 
     # determine if we need to show new link.
-    if latest and latest.get('post_date_int') and latest['post_date_int'] > last_seen_time:
-        output_text += '<a href="{0}#first-new-post" class="new">new</a>'.format(topic.get_last_url())
+    if latest and latest.post_date_int > last_seen_time:
+        output_text += '<a href="{0}#first-new-post" class="new">new</a>'.format(topic.last_url)
 
     # If only one post (or none) only return new link, if anything.
     if topic.post_count < 2:
@@ -76,7 +72,7 @@ def topic_quick_links(context, topic, latest, last_seen_time):
     else:
         # We have more than one post. Create last link
         if latest:
-            last_link = '<a href="{0}#post-{1}" title="latest post">'.format(topic.get_last_url(), latest['id'])
+            last_link = '<a href="{0}#post-{1}" title="latest post">'.format(topic.last_url, latest.id)
         else:
             last_link = ''
 

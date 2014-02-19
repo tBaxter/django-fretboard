@@ -1,18 +1,18 @@
 {% extends "fretboard/base.html" %}{% load cache typogrify_tags %}
 {% block content %}
-  <h1>{{ site_name }}</h1>
-  {% cache 600 forum-cat-list 10 %}
+  <h1>{{ FORUM_BASE_NAME }}</h1>
+  {% cache 600 forum-cat-list 12 %}
     {% regroup forums by category as cat_list %}
     <article id="forum_categories">
       {% for cat in cat_list %}
         <section>
-          <h1>{{cat.grouper}}</h1>
+          <h1>{{ cat.grouper }}</h1>
           <dl>
             {% for forum in cat.list %}
               <dt>
                 <a href="{% url 'topic_list' forum.slug %}">{{ forum.name }}</a>
               </dt>
-              <dd class="desc">{{forum.description|typogrify }}</dd>
+              <dd class="desc">{{ forum.description|typogrify }}</dd>
               <dd class="recent">
                 <ul>
                   {% for topic in forum.get_recent %}
