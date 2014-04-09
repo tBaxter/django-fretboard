@@ -78,7 +78,7 @@ class Topic(models.Model):
     is_locked        = models.BooleanField(blank=True, default=False)
 
     user             = models.ForeignKey(get_user_model(), blank=True, null=True, editable=False)
-    author           = models.CharField(max_length=255, blank=True)
+    #author           = models.CharField(max_length=255, blank=True)
 
     objects = TopicManager()
 
@@ -135,6 +135,13 @@ class Topic(models.Model):
     @cached_property
     def votes(self):
         return Vote.objects.get_score(self)['score']
+
+    @cached_property
+    def author(self):
+        try:
+            return self.post_set.all()[0].author
+        except IndexError:
+            return None
 
 
 class Post(models.Model):
