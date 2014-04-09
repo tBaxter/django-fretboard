@@ -6,3 +6,17 @@ fretboard/templatetags/.DS_Store
 *.pyc
 
 .DS_Store
+
+*.gz
+
+django_fretboard.egg-info/PKG-INFO
+
+django_fretboard.egg-info/top_level.txt
+
+django_fretboard.egg-info/requires.txt
+
+django_fretboard.egg-info/not-zip-safe
+
+django_fretboard.egg-info/dependency_links.txt
+
+django_fretboard.egg-info/SOURCES.txt

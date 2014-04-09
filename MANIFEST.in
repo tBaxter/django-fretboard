@@ -1,0 +1,7 @@
+include LICENSE README.md
+recursive-include fretboard *.html
+recursive-include fretboard *.css
+recursive-include fretboard *.js
+
+recursive-include docs *.txt
+recursive-include docs *.md

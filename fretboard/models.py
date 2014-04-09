@@ -149,7 +149,8 @@ class Post(models.Model):
     image = ThumbnailerImageField(
         upload_to = set_img_path,
         help_text = "Image size should be a minimum of 720px and no more than 2000px (width or height)",
-        blank=True
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -158,7 +159,7 @@ class Post(models.Model):
         db_table      = 'forum_post'
 
     def __unicode__(self):
-        return unicode(self.id)
+        return unicode(self.topic)
 
     def save(self, *args, **kwargs):
         """
@@ -167,6 +168,9 @@ class Post(models.Model):
         self.text = clean_text(self.text)
         self.text_formatted = format_post(self.text)
         super(Post, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return self.post_url
 
     @cached_property
     def post_url(self):
