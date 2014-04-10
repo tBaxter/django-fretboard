@@ -33,9 +33,11 @@
       </blockquote>
     {% endif %}
   {% endwith %}
+  
   {% if obj.image %}
     <figure data-deferred-load="{{ obj.image.t_540u.url }}">
-  </figure>
+    </figure>
   {% endif %}
-  {% firstof obj.text_formatted|safe obj.text|markdown %}
+  
+  {{ obj.text_formatted|safe }}
 </section>
