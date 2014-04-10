@@ -1,4 +1,4 @@
-{% load fretboard_tags markup timesince_filters %}
+{% load fretboard_tags timesince_filters %}
 
 <header {% if obj.id in newposts %}class="new"{% endif %}{% if obj.id == new_post_id %}id="first-new-post"{% endif %}>
   {% if start_number %}
@@ -28,8 +28,8 @@
         {% if q.image %}
           <figure data-deferred-load="{{ q.image.t_540u.url }}"></figure>
         {% endif %}
-        {% firstof q.text_formatted|safe q.text|markdown %}
-        <footer class="right"> &ndash; {{ q.author_name }}</footer>
+        {{ q.text_formatted }}
+        <footer class="right"> &ndash; {{ q.author_display_name }}</footer>
       </blockquote>
     {% endif %}
   {% endwith %}
