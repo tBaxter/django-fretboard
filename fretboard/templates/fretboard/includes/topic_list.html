@@ -4,7 +4,7 @@
   {% for topic in topics %}
     {# Cache these snippets until mod time changes #}
     {% cache 360 't_list' topic.id topic.modified_int forum_slug user.is_superuser 1 %}
-      <article class="topic {{ topic.votes|collapse_bad }}">
+      <article class="topic {{ topic.votes|set_flag }}">
         {% with topic.forum as t_forum %}
           <section class="t">
             {% if not can_add_topic %} 

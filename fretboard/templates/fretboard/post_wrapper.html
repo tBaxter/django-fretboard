@@ -39,7 +39,7 @@
     {% endwith %}
 
     {% if authenticated_request and user.is_active %}
-      <form method="post" action="{% url 'add_post' topic.slug topic.id %}" id="reply"  class="boxedform {{ topic.votes|collapse_bad }}" enctype="multipart/form-data"> 
+      <form method="post" action="{% url 'add_post' topic.slug topic.id %}" id="reply"  class="boxedform {{ topic.votes|set_flag }}" enctype="multipart/form-data"> 
         {% include "fretboard/includes/post_form.html" %}
       </form>
     {% else %}

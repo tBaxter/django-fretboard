@@ -2,7 +2,7 @@
 
 <div id="comment-list">
   {% for obj in object_list %}
-    <article class="post {{ obj.votes|collapse_bad }}" id="post-{{ obj.id }}">
+    <article class="post {{ obj.votes|set_flag }}" id="post-{{ obj.id }}">
       {% include "fretboard/includes/post_single.html" %}
       {% if authenticated_request %}
         <footer>
