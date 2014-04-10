@@ -17,7 +17,7 @@
 
 {% block content %}
   <header id="postlist_header">
-    {% include "fretboard/includes/postlist_pagination.html" %}
+    {% include "fretboard/includes/pagination.html" %}
     <h2 class="kicker">
       <a href="{% url 'fretboard_index' %}">{{ FORUM_BASE_NAME }}</a> ► 
       <a href="{% url 'topic_list' forum_slug %}">{{ forum_name }}</a>
@@ -27,7 +27,7 @@
 
   {% include "fretboard/includes/post_list.html" %}
   
-  {% include "fretboard/includes/postlist_pagination.html" %}
+  {% include "fretboard/includes/pagination.html" %}
   
   <hr class="clear">
 
