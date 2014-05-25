@@ -37,7 +37,7 @@ class MemberTopics(BaseTopicList):
         context = super(MemberTopics, self).get_context_data(**kwargs)
         context.update({
             'forum_slug' : 'user-topics',
-            'forum_name' : 'Topics for %s' % self.topic_user.preferred_name,
+            'forum_name' : 'Topics for %s' % self.topic_user.display_name,
         })
         return context
 
@@ -55,7 +55,7 @@ class CommentedTopics(MemberTopics):
         cursor = connection.cursor()
         cursor.execute("""
             SELECT ft.id FROM forum_topic ft, forum_post fp
-            WHERE fp.topic_id = ft.id AND fp.author_id ='{0}'
+            WHERE fp.topic_id = ft.id AND fp.user_id ='{0}'
             GROUP BY ft.id
             ORDER BY ft.id DESC LIMIT 0, 500
             """.format(self.topic_user.id))

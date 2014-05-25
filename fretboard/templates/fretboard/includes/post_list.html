@@ -6,8 +6,8 @@
       {% include "fretboard/includes/post_single.html" %}
       {% if authenticated_request %}
         <footer>
-          {% if user.show_signatures and obj.author.signature %}
-            <p class="meta signature">{{ obj.author.signature|striptags }}</p>
+          {% if user.show_signatures and obj.user.signature %}
+            <p class="meta signature">{{ obj.user.signature|striptags }}</p>
           {% endif %}
           {% if not locked %}
             <ul class="postcontrols button sub-nav thinline">
@@ -18,7 +18,7 @@
                   <li class="icon-quote">
                     <a href="{% url 'post_with_quote' topic_slug topic_id obj.id %}">Quote</a>
                   </li>
-                  {% if obj.author_id == user.id or user.is_staff and perms.fretboard.can_delete_post %}
+                  {% if obj.user_id == user.id or user.is_staff and perms.fretboard.can_delete_post %}
                     <li class="icon-edit">
                       <a href="{% url 'edit_post' obj.id %}">Edit</a>
                     </li>

@@ -34,7 +34,7 @@ class PostForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'tabindex': '1', 'placeholder': COMMENT_PLACEHOLDER}),
             'topic': forms.HiddenInput(),
-            'author': forms.HiddenInput(),
+            'user': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):

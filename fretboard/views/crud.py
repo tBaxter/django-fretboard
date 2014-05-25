@@ -29,8 +29,8 @@ def add_topic(request, forum_slug):
         instance.name            = strip_tags(instance.name)
         instance.slug            = slugify(instance.name)
         instance.user            = user
-        instance.author          = user.preferred_name
-        instance.lastpost_author = user.preferred_name
+        instance.author          = user.display_name
+        instance.lastpost_author = user.display_name
         instance.created_int     = current_time
         instance.modified_int    = current_time
         instance.save()
@@ -39,7 +39,7 @@ def add_topic(request, forum_slug):
         post = Post(
             topic            = instance,
             text             = request.POST['text'],
-            author           = user,
+            user             = user,
             post_date_int    = current_time
         )
         if request.FILES:
@@ -85,8 +85,8 @@ def add_post(request, t_slug, t_id, p_id = False):  # topic slug, topic id, post
 
         instance = form.save(commit=False)
         instance.topic  = topic
-        instance.author = user
-        instance.author_name = user.preferred_name
+        instance.user = user
+        instance.author_name = user.display_name
         instance.avatar = user.avatar
         instance.post_date_int = current_time
         instance.quote = q

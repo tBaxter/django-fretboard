@@ -15,35 +15,45 @@
 {% endblock %}
 
 {% block forum_nav %}
- 	{% if user.is_authenticated %}
-	<li>
-		<a href="/forum/new-topics/" title="New topics since your last visit">
-			<span class="right">{{ topic_counts.1 }}</span>Since Your Last Visit</a></li>
-	<li id="recent_topics"><a href="/forum/my-topics/">Your recent topics</a></li>
- 	
- 	{# keep within authenticated block to keep hits down #}
-     <li id="searchhold"><a href="/forum/search/" id="search-box-trigger">Search</a></li>
-     <li>
-       <form action="/forum/search/" method="get" id="forum_search">{% csrf_token %}
-            <p><label for="id_name">Topic name:</label> <input type="text" name="name" value="" id="id_name" /></p>
-            <p><label for="id_text">Post text:</label> <input type="text" name="text" id="id_text" /></p>
-            <p class="submithold"><input type="submit" value="search"></p>
-          <p class="note meta">Note: Topic search is much faster. Probably works better, too.</p>
-        </form>	
-	{% endif %}
-    <select class="url-selector">
-      <option value="">Jump to...</option>
-      {% get_forum_list as forum_list %}
-      {% regroup forum_list by category__name as forum_names %}
-      {% for c in forum_names %}
-        <optgroup label="{{ c.grouper }}">
-          {% for f in c.list %}
-            <option value="{% url 'topic_list' f.slug %}">{{ f.name }}</option>
-          {% endfor %}
-        </optgroup>
-      {% endfor %}
-    </select>
-		</li> 
+  {% if user.is_authenticated %}
+    <li>
+      <a href="/forum/new-topics/" title="New topics since your last visit">
+        <span class="right">{{ topic_counts.1 }}</span> Since Your Last Visit
+      </a>
+    </li>
+    <li id="recent_topics"><a href="/forum/my-topics/">Your recent topics</a></li>
+
+    {# keep within authenticated block to keep hits down #}
+    <li id="searchhold">
+      <a href="{% url 'fretboard_search' %}" id="search-box-trigger">Search</a>
+      <form action="{% url 'fretboard_search' %}" method="get" class="boxedform" id="forum_search">
+        <p>
+          <label for="id_name">Topic name:</label> 
+          <input type="text" name="name" value="" id="id_name" />
+        </p>
+        <p>
+          <label for="id_text">Post text:</label> 
+          <input type="text" name="text" id="id_text" />
+        </p>
+        <p class="submit">
+          <input type="submit" value="search">
+        </p>
+        <p class="meta">Note: Topic search is much faster. Probably works better, too.</p>
+      </form> 
+    </li>
+  {% endif %}
+  <select class="url-selector">
+    <option value="">Jump to...</option>
+    {% get_forum_list as forum_list %}
+    {% regroup forum_list by category__name as forum_names %}
+    {% for c in forum_names %}
+      <optgroup label="{{ c.grouper }}">
+        {% for f in c.list %}
+          <option value="{% url 'topic_list' f.slug %}">{{ f.name }}</option>
+        {% endfor %}
+      </optgroup>
+    {% endfor %}
+  </select>
 {% endblock %}
 
 

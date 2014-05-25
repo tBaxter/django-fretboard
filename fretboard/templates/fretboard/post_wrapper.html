@@ -35,6 +35,7 @@
     <h2>This topic is locked. No further posts are being accepted.</h2>
   {% else %}
     {% with topic as object %}
+
       {% social_links object user authenticated_request vote_down=True vote_down_msg="This is a terrible topic, and I wish it would just go away." %}
     {% endwith %}
 

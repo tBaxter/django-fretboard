@@ -3,7 +3,7 @@
 {% with request.session.last_seen_timestamp as new_time %}
   {% for topic in topics %}
     {# Cache these snippets until mod time changes #}
-    {% cache 360 't_list' topic.id topic.modified_int forum_slug user.is_superuser 1 %}
+    {% cache 360 't_list' topic.id topic.modified_int forum_slug user.is_superuser 2 %}
       <article class="topic {{ topic.votes|set_flag }}">
         {% with topic.forum as t_forum %}
           <section class="t">
@@ -18,7 +18,7 @@
             <!--googleoff: all-->
               <p>
                 {% if topic.created %} 
-                  <span class="meta">{{ topic.author_display_name|title|truncatechars:"30" }} started</span>
+                  <span class="meta">{{ topic.author.display_name|title|truncatechars:"30" }} started</span>
                   <time datetime="{{ topic.created|date:"Y-m-d\TH:i:00" }}">
                     {{ topic.created|naturaltime }}
                   </time>

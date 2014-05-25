@@ -5,11 +5,11 @@
     <span class="counter">{{ forloop.counter0|add:start_number }}</span>
   {% endif %}
   <span class="avatar-hold">
-    {% url 'view_profile_by_id' obj.author_id as author_url %}
+    {% url 'view_profile_by_id' obj.user_id as author_url %}
     <a href="{{ author_url }}" rel="author">
       <span class="avatar" data-deferred-load="{{ obj.avatar }}">
       </span>
-      {{ obj.author.display_name }}
+      {{ obj.author_display_name }}
     </a>
   </span>
   {% with obj.post_date as d %}
@@ -28,16 +28,18 @@
         {% if q.image %}
           <figure data-deferred-load="{{ q.image.t_540u.url }}"></figure>
         {% endif %}
-        {{ q.text_formatted }}
+
+        {{ q.text_formatted|safe }}
+
         <footer class="right"> &ndash; {{ q.author_display_name }}</footer>
       </blockquote>
     {% endif %}
   {% endwith %}
-  
   {% if obj.image %}
     <figure data-deferred-load="{{ obj.image.t_540u.url }}">
-    </figure>
+  </figure>
   {% endif %}
-  
+
   {{ obj.text_formatted|safe }}
+  
 </section>

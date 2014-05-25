@@ -3,10 +3,9 @@ from django.db import models
 from django.utils.functional import cached_property
 
 from easy_thumbnails.fields import ThumbnailerImageField
-from tango_shared.models import set_img_path
+from tango_shared.models import set_img_path, BaseUserContentModel
 from voting.models import Vote
 
-from .helpers import clean_text, format_post
 from .managers import TopicManager
 from .settings import PAGINATE_BY
 
@@ -139,19 +138,15 @@ class Topic(models.Model):
     @cached_property
     def author(self):
         try:
-            return self.post_set.all()[0].author
+            return self.post_set.all()[0].user
         except IndexError:
             return None
 
 
-class Post(models.Model):
-    topic          = models.ForeignKey(Topic)
-    text           = models.TextField()
-    text_formatted = models.TextField(blank=True)
-    author         = models.ForeignKey(get_user_model())
-    post_date      = models.DateTimeField(auto_now_add=True)
-    post_date_int  = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
-    quote          = models.ForeignKey('self', null=True, blank=True)
+class Post(BaseUserContentModel):
+    topic = models.ForeignKey(Topic)
+    post_date_int = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
+    quote = models.ForeignKey('self', null=True, blank=True)
 
     image = ThumbnailerImageField(
         upload_to = set_img_path,
@@ -168,14 +163,6 @@ class Post(models.Model):
     def __unicode__(self):
         return unicode(self.topic)
 
-    def save(self, *args, **kwargs):
-        """
-        Clean text and save formatted version.
-        """
-        self.text = clean_text(self.text)
-        self.text_formatted = format_post(self.text)
-        super(Post, self).save(*args, **kwargs)
-
     def get_absolute_url(self):
         return self.post_url
 
@@ -190,18 +177,20 @@ class Post(models.Model):
         return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
 
     @cached_property
-    def votes(self):
-        """ Return vote score """
-        return Vote.objects.get_score(self)['score']
+    def author(self):
+        """
+        Convenience alias from user to 'author'
+        """
+        return self.user
+
+    @cached_property
+    def author_display_name(self):
+        return self.user.display_name
 
     @cached_property
     def avatar(self):
         try:
-            avatar_url = self.author.avatar.url
+            avatar_url = self.user.avatar.url
         except ValueError: # catch avatar url does not exist
             avatar_url = '/img/avatars/default.jpg'
         return avatar_url
-
-    @cached_property
-    def author_display_name(self):
-        return self.author.display_name
