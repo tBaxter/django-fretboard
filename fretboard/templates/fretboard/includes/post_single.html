@@ -1,4 +1,4 @@
-{% load fretboard_tags timesince_filters %}
+{% load fretboard_tags tango_time_tags %}
 
 <header {% if obj.id in newposts %}class="new"{% endif %}{% if obj.id == new_post_id %}id="first-new-post"{% endif %}>
   {% if start_number %}

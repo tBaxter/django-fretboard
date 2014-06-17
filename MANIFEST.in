@@ -1,4 +1,4 @@
-include LICENSE README.md
+include LICENSE README.md CHANGES.md
 recursive-include fretboard *.html
 recursive-include fretboard *.css
 recursive-include fretboard *.js
