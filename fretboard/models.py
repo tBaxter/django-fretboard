@@ -60,9 +60,11 @@ class Forum(models.Model):
 class Topic(models.Model):
     """
     Topics within a forum. User-created.
+
     Created and modified are stored as both datetime objects and as an ordinal+hour integer 
     because querying by int is faster, especially in Mysql. See:
     http://stackoverflow.com/questions/4594229/mysql-integer-vs-datetime-index
+    
     """
     forum            = models.ForeignKey(Forum)
     name             = models.CharField(max_length=255, verbose_name="Topic Title")
@@ -77,7 +79,14 @@ class Topic(models.Model):
     is_locked        = models.BooleanField(blank=True, default=False)
 
     user             = models.ForeignKey(get_user_model(), blank=True, null=True, editable=False)
-    #author           = models.CharField(max_length=255, blank=True)
+
+    redirect_url = models.CharField(
+        max_length=255,
+        blank=True, 
+        null=True, 
+        help_text = "If set, traffic to this topic will redirect to the given URL."
+    )
+
 
     objects = TopicManager()
 

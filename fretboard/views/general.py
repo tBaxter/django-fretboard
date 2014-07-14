@@ -1,7 +1,7 @@
 import time
 from datetime import datetime, timedelta
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import ListView
 
 from fretboard.filters import PostFilter, TopicFilter
@@ -112,18 +112,20 @@ class PostList(ListView):
     paginate_by = PAGINATE_BY
     context_object_name = 'posts'
 
-    def get_queryset(self):
-        return Post.objects.filter(topic__id=self.kwargs.get('t_id'))
-
     def dispatch(self, request, *args, **kwargs):
         self.topic = get_object_or_404(Topic, id=kwargs.get('t_id'))
         self.page  = kwargs.get('page', 1)
-        return super(PostList, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
+        
+        # if topic has a redirect, just go there
+        if self.topic.redirect_url:
+            return redirect(self.topic.redirect_url) 
+        # if this is an ajax request, use the template snippet
         if request.is_ajax():
             self.template_name = 'fretboard/includes/post_list.html'
-        return super(PostList, self).get(request, *args, **kwargs)
+        return super(PostList, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Post.objects.filter(topic__id=self.kwargs.get('t_id'))
 
     def get_context_data(self, **kwargs):
         context = super(PostList, self).get_context_data(**kwargs)
