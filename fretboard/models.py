@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -7,7 +7,11 @@ from tango_shared.models import set_img_path, BaseUserContentModel
 from voting.models import Vote
 
 from .managers import TopicManager
-from .settings import PAGINATE_BY
+
+
+def get_paginate_by():
+    from .settings import PAGINATE_BY
+    return PAGINATE_BY
 
 
 class Category(models.Model):
@@ -61,10 +65,10 @@ class Topic(models.Model):
     """
     Topics within a forum. User-created.
 
-    Created and modified are stored as both datetime objects and as an ordinal+hour integer 
+    Created and modified are stored as both datetime objects and as an ordinal+hour integer
     because querying by int is faster, especially in Mysql. See:
     http://stackoverflow.com/questions/4594229/mysql-integer-vs-datetime-index
-    
+
     """
     forum            = models.ForeignKey(Forum)
     name             = models.CharField(max_length=255, verbose_name="Topic Title")
@@ -78,12 +82,12 @@ class Topic(models.Model):
     is_sticky        = models.BooleanField(blank=True, default=False)
     is_locked        = models.BooleanField(blank=True, default=False)
 
-    user             = models.ForeignKey(get_user_model(), blank=True, null=True, editable=False)
+    user             = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, editable=False)
 
     redirect_url = models.CharField(
         max_length=255,
-        blank=True, 
-        null=True, 
+        blank=True,
+        null=True,
         help_text = "If set, traffic to this topic will redirect to the given URL."
     )
 
@@ -96,7 +100,7 @@ class Topic(models.Model):
     class Meta:
         db_table      = 'forum_topic'
         ordering      = ['-modified_int']
-    
+
     def get_absolute_url(self):
         """
         Returns URL to first page of topic.
@@ -108,7 +112,7 @@ class Topic(models.Model):
     def get_short_url(self):
         """ Returns short version of topic url (without page number) """
         return ('post_short_url', [self.forum.slug, self.slug, str(self.id)])
-    
+
     @cached_property
     def last_url(self):
         """ Returns link to last page of topic """
@@ -131,8 +135,8 @@ class Topic(models.Model):
         Get count of total pages
         """
         postcount = self.post_set.count()
-        max_pages = (postcount / PAGINATE_BY)
-        if postcount % PAGINATE_BY != 0:
+        max_pages = (postcount / get_paginate_by())
+        if postcount % get_paginate_by() != 0:
             max_pages += 1
         return max_pages
 
@@ -150,6 +154,14 @@ class Topic(models.Model):
             return self.post_set.all()[0].user
         except IndexError:
             return None
+
+    def get_image(self):
+        """
+        Gets first image from post set.
+        """
+        posts_with_images =  self.post_set.filter(image__gt='')
+        if posts_with_images:
+            return posts_with_images[0].image
 
 
 class Post(BaseUserContentModel):
@@ -177,12 +189,12 @@ class Post(BaseUserContentModel):
 
     @cached_property
     def post_url(self):
-        """ 
+        """
         Determine which page this post lives on within the topic
         and return link to anchor within that page
         """
         topic = self.topic
-        topic_page = topic.post_set.filter(id__lt=self.id).count() / PAGINATE_BY + 1
+        topic_page = topic.post_set.filter(id__lt=self.id).count() / get_paginate_by() + 1
         return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
 
     @cached_property
@@ -203,3 +215,10 @@ class Post(BaseUserContentModel):
         except ValueError: # catch avatar url does not exist
             avatar_url = '/img/avatars/default.jpg'
         return avatar_url
+
+    @cached_property
+    def parent(self):
+        """
+        Shortcut to parent topic. Makes life easier for activity monitor.
+        """
+        return self.topic

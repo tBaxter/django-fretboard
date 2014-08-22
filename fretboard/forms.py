@@ -14,7 +14,7 @@ class AddTopicForm(forms.ModelForm):
 
     class Meta:
         model = Topic
-        fields = ['name', 'image', 'text']
+        fields = ['forum', 'name', 'image', 'text']
         widgets = {
             'forum': forms.HiddenInput(),
         }

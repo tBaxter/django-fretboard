@@ -37,6 +37,11 @@ urlpatterns += patterns('',
 ### CRUD Urls
 urlpatterns += patterns('fretboard.views.crud',
   url(
+    r'^add-topic/$',
+    'add_topic',
+    name="generic_add_topic"
+  ),
+  url(
     r'^(?P<forum_slug>[-\w]+)/add-topic/$',
     'add_topic',
     name="add_topic"
@@ -78,7 +83,7 @@ urlpatterns += patterns('',
     regex=r'^new-topics/page(?P<page>[0-9]+)/$',
     view=NewTopics.as_view(),
     name="new_topics_paginated"),
-  
+
   url(
     regex=r'^latest-topics/$',
     view=NewTopics.as_view(),

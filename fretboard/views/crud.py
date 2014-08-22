@@ -16,10 +16,11 @@ from fretboard.settings import PAGINATE_BY, FORUM_BASE_NAME
 
 
 @login_required
-def add_topic(request, forum_slug):
+def add_topic(request, forum_slug=None):
     """ Adds a topic to a given forum """
-    forum = get_object_or_404(Forum, slug=forum_slug)
-    form  = AddTopicForm(request.POST or None, request.FILES or None)
+    forum = Forum.objects.get(slug=forum_slug)
+    form  = AddTopicForm(request.POST or None, request.FILES or None, initial={'forum': forum})
+
     current_time   = time.time()
     user           = request.user
 
