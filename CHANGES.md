@@ -1,3 +1,6 @@
+## 1.9.1
+Removed select_related depth argument. Incompatible with Django 1.7
+
 ## 1.9.0
 Updates for Django 1.7
 

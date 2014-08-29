@@ -71,7 +71,7 @@ class NewTopics(BaseTopicList):
         last_seen_timestamp = self.request.session.get('last_seen_timestamp', None)
         if not last_seen_timestamp or last_seen_timestamp > one_day_ago_int:
             last_seen_timestamp = one_day_ago_int
-        return Topic.objects.filter(modified_int__gt=last_seen_timestamp).select_related(depth=1)
+        return Topic.objects.filter(modified_int__gt=last_seen_timestamp).select_related('post')
 
     def get_context_data(self, **kwargs):
         context = super(NewTopics, self).get_context_data(**kwargs)
@@ -115,10 +115,10 @@ class PostList(ListView):
     def dispatch(self, request, *args, **kwargs):
         self.topic = get_object_or_404(Topic, id=kwargs.get('t_id'))
         self.page  = kwargs.get('page', 1)
-        
+
         # if topic has a redirect, just go there
         if self.topic.redirect_url:
-            return redirect(self.topic.redirect_url) 
+            return redirect(self.topic.redirect_url)
         # if this is an ajax request, use the template snippet
         if request.is_ajax():
             self.template_name = 'fretboard/includes/post_list.html'
