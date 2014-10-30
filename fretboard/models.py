@@ -130,6 +130,17 @@ class Topic(models.Model):
             return None
 
     @cached_property
+    def first_post(self):
+        """
+        Attempts to get first post in a topic.
+        Returns none if it fails.
+        """
+        try:
+            return self.post_set.all()[0]
+        except IndexError:
+            return None
+
+    @cached_property
     def page_count(self):
         """
         Get count of total pages

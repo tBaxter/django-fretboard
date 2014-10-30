@@ -1,3 +1,6 @@
+## 1.10.0
+Added "first_post" cached property to Topic.
+
 ## 1.9.1
 Removed select_related depth argument. Incompatible with Django 1.7
 
