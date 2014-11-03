@@ -7,11 +7,11 @@ with open('docs/requirements.txt') as f:
 
 setup(
     name='django-fretboard',
-    version='1.10.0',
+    version='1.10.1',
     author=u'Tim Baxter',
     author_email='mail.baxter@gmail.com',
     url='http://github.com/tBaxter/django-fretboard',
-    license='LICENSE',
+    license='MIT',
     description='Responsive, powerful, simple Django forums.',
     long_description=open('README.md').read(),
     packages=find_packages(),

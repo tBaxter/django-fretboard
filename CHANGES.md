@@ -1,3 +1,6 @@
+## 1.10.1
+Tested build against Python 3
+
 ## 1.10.0
 Added "first_post" cached property to Topic.
 

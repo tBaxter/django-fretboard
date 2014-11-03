@@ -1,9 +1,13 @@
 django-fretboard
 ================
 
+[![Build Status](https://travis-ci.org/tBaxter/django-fretboard.svg?branch=master)](https://travis-ci.org/tBaxter/django-fretboard)
+
 Django-Fretboard is a fork of the forums used on gretschpages.com/forum/
 
-It is built for Django 1.5, and is not compatible with previous versions of Django.
+It is built for Django 1.5+, and is not compatible with older versions of Django.
+
+It has been tested in Python 2.7 and 3.4 and up to Django 1.7.1
 
 
 ### Settings
