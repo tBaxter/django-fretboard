@@ -1,12 +1,13 @@
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 
 from fretboard.models import Forum, Topic, Post
 
 
 def moderate(request, topic_id, forum_slug):
-    resave_topic = True
-    action = request.GET.get('act', None)
+    action = request.POST.get('act', None)
+
     if request.user.is_staff:
         topic = Topic.objects.get(id=topic_id)
         if action == 'lock':
@@ -16,28 +17,28 @@ def moderate(request, topic_id, forum_slug):
         elif action == 'delete':
             Post.objects.filter(topic__id=topic_id).delete()
             topic.delete()
-            resave_topic = False
         elif action == 'stick':
             topic.is_sticky = True
         elif action == 'unstick':
             topic.is_sticky = False
         elif action == 'move':
-            if request.GET.get('forum'):
+            if request.POST.get('forum'):
                 topic.forum = Forum.objects.get(id=request.GET['forum'])
             else:
                 forums = Forum.objects.exclude(slug=forum_slug)
                 return render(request, 'fretboard/utils/move_topic.html', {
-                    'forums': forums, 
+                    'forums': forums,
                     'topic': topic,
                     'act': action
                 })
         else:
             messages.error(request, "We didn't recognize the command: %s." % action)
-        if resave_topic:
+
+        if action != 'delete':
             topic.save()
     else:
         if not action:
             messages.error(request, "We couldn't find an action: %s" % action)
         else:
             messages.error(request, "You don't have permission to %s topics." % action)
-    return redirect("/forum/{0}/".format(forum_slug))
+    return redirect(reverse('topic_list', kwargs={'forum_slug': forum_slug}))

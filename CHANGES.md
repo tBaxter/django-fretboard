@@ -1,3 +1,6 @@
+## 1.11.0
+Closed CSRF hole in moderation commands
+
 ## 1.10.1
 Tested build against Python 3
 
