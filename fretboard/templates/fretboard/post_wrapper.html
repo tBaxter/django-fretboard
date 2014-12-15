@@ -3,11 +3,11 @@
 
 {% block title %}
   {{ topic.name }}
-  {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %}: 
-  {{ forum_name }} : 
+  {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %}:
+  {{ forum_name }} :
 {% endblock %}
 
-{% block description %}{% with object_list.values.0 as firstpost %}'{{ firstpost.text|truncatewords:"20" }}'. Posted in {{ forum_name }} at {% endwith %} {{ FORUM_BASE_NAME }}{% endblock %}
+{% block description %}'{{ topic.name }}'. Posted in {{ forum_name }} at {% endwith %} {{ FORUM_BASE_NAME }} {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %} {% endblock %}
 
 {% block canonical %}
   <link rel="canonical" href="http://{{ site.domain }}{{ canonical_url }}">
@@ -19,19 +19,19 @@
   <header id="postlist_header">
     {% include "fretboard/includes/paginator.html" %}
     <h2 class="kicker">
-      <a href="{% url 'fretboard_index' %}">{{ FORUM_BASE_NAME }}</a> ► 
+      <a href="{% url 'fretboard_index' %}">{{ FORUM_BASE_NAME }}</a> ►
       <a href="{% url 'topic_list' forum_slug %}">{{ forum_name }}</a>
     </h2>
-    <h1>{{ topic.name|truncatechars:"70"|typogrify }}</h1>  
+    <h1>{{ topic.name|truncatechars:"70"|typogrify }}</h1>
   </header>
 
   {% include "fretboard/includes/post_list.html" %}
-  
+
   {% include "fretboard/includes/paginator.html" %}
-  
+
   <hr class="clear">
 
-  {% if locked %} 
+  {% if locked %}
     <h2>This topic is locked. No further posts are being accepted.</h2>
   {% else %}
     {% with topic as object %}
@@ -40,12 +40,12 @@
     {% endwith %}
 
     {% if authenticated_request and user.is_active %}
-      <form method="post" action="{% url 'add_post' topic.slug topic.id %}" id="reply"  class="boxedform {{ topic.votes|set_flag }}" enctype="multipart/form-data"> 
+      <form method="post" action="{% url 'add_post' topic.slug topic.id %}" id="reply"  class="boxedform {{ topic.votes|set_flag }}" enctype="multipart/form-data">
         {% include "fretboard/includes/post_form.html" %}
       </form>
     {% else %}
       <h4 id="reply">Want to join the conversation? <a href="/login/?next={{ canonical_url }}" class="button">sign in</a> to post.</h4>
-    {% endif %} 
+    {% endif %}
   {% endif %}
   <hr class="clear">
 {% endblock %}
