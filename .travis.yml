@@ -4,4 +4,4 @@ python:
   - "3.4"
 install:
   - "pip install -e . "
-script: django-admin.py test --settings=test_settings
+script: django-admin.py tests --settings=test_settings
