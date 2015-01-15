@@ -5,7 +5,8 @@ def current_site():
     """
     Helper function to play nice with appconfig loading.
     """
-    return Site.objects.get_current()
+    current_site = Site.objects.get_current()
+    return current_site
 
 
 PAGINATE_BY = getattr(settings, "PAGINATE_BY", 25)
