@@ -1,6 +1,4 @@
-from crud import *
-from general import *
-from moderate import *
+import unittest
 
-if __name__ == '__main__':
-    unittest.main()
+def suite():
+    return unittest.TestLoader().discover("fretboard.tests", pattern="*.py")
