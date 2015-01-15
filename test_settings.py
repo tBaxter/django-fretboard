@@ -15,6 +15,8 @@ DATABASES = {
 
 SITE_ID = 1
 
+ROOT_URLCONF = 'fretboard.urls'
+
 #stripped down middleware
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
