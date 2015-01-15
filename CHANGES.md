@@ -1,3 +1,7 @@
+## 1.12.0
+* Make app settings play nice with 1.7 app loader
+* added some middleware to test settings to keep Travis happy.
+
 ## 1.11.0
 Closed CSRF hole in moderation commands
 
