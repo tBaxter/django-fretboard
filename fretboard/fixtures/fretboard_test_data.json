@@ -53,9 +53,10 @@
       "text": "Test topic post",
       "text_formatted": "Test topic post",
       "author": 1,
-      "author_name": "Bruce Wayne",
       "post_date": "2012-11-18 00:30:33.789281",
-      "post_date_int": "1353220297"
+      "post_date_int": "1353220297",
+      "quote": "",
+      "image": ""
     }
   }
 ]
