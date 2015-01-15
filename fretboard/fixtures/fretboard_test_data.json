@@ -52,7 +52,7 @@
       "topic": 1,
       "text": "Test topic post",
       "text_formatted": "Test topic post",
-      "author": 1,
+      "user": 1,
       "post_date": "2012-11-18 00:30:33.789281",
       "post_date_int": "1353220297",
       "quote": "",
