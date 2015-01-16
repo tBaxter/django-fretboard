@@ -1,3 +1,5 @@
+import os
+
 SECRET_KEY = "lorem ipsum"
 
 INSTALLED_APPS = (
@@ -31,4 +33,5 @@ MIDDLEWARE_CLASSES = (
 
 TEMPLATE_DIRS = (
     'templates',
+    os.path.join(os.path.dirname(__file__), '..', 'templates').replace('\\', '/')
 )
