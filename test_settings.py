@@ -30,5 +30,5 @@ MIDDLEWARE_CLASSES = (
 )
 
 TEMPLATE_DIRS = (
-    'templates'
+    'templates',
 )
