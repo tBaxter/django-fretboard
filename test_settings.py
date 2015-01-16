@@ -5,6 +5,9 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sites',
     'fretboard',
+    'typogrify',
+    'voting',
+    'easy_thumbnails',
 )
 
 DATABASES = {
