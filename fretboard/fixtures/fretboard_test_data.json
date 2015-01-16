@@ -1,5 +1,13 @@
 [
   {
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+      "domain": "myproject.mydomain.com",
+      "name": "My Project"
+    }
+  }
+  {
     "model": "fretboard.category",
     "pk": 1,
     "fields": {
