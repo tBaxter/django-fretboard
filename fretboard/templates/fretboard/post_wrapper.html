@@ -7,7 +7,8 @@
   {{ forum_name }} :
 {% endblock %}
 
-{% block description %}'{{ topic.name }}'. Posted in {{ forum_name }} at {% endwith %} {{ FORUM_BASE_NAME }} {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %} {% endblock %}
+{% block description %}'{{ topic.name }}'. Posted in {{ forum_name }} at {{ FORUM_BASE_NAME }} {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %}
+{% endblock %}
 
 {% block canonical %}
   <link rel="canonical" href="http://{{ site.domain }}{{ canonical_url }}">
