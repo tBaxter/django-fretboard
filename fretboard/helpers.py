@@ -1,9 +1,12 @@
 import re
 import time
-import urlparse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 
 from datetime import datetime
-
 
 import bleach
 import markdown
@@ -131,7 +134,7 @@ def clean_text(value, topic=False):
         p = re.compile(bbset[0], re.DOTALL)
         value = p.sub(bbset[1], value)
     bleached = bleach.clean(value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True)
-    # because we want to retain markdown quotes, 
+    # because we want to retain markdown quotes,
     # and we'll be running bleach again in format_post.
     bleached = bleached.replace('&gt;', '>').replace('&amp;', '&')
     return bleached

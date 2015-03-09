@@ -1,3 +1,9 @@
+## 1.12.2
+* Corrected urlparse import
+
+## 1.12.1
+* Fixed bad endwith in templates
+
 ## 1.12.0
 * Make app settings play nice with 1.7 app loader
 * added some middleware to test settings to keep Travis happy.
