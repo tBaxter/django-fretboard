@@ -28,6 +28,9 @@ class Category(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
     def get_forum_names(self):
         """
         Return forum names and slugs for the current category.
@@ -48,6 +51,9 @@ class Forum(models.Model):
     is_closed           = models.BooleanField(default=False)
 
     def __unicode__(self):
+        return self.name
+
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -95,6 +101,9 @@ class Topic(models.Model):
     objects = TopicManager()
 
     def __unicode__(self):
+        return self.name
+
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -194,6 +203,9 @@ class Post(BaseUserContentModel):
 
     def __unicode__(self):
         return unicode(self.topic)
+
+    def __str__(self):
+        return self.topic
 
     def get_absolute_url(self):
         return self.post_url

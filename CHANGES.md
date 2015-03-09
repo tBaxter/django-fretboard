@@ -1,3 +1,7 @@
+## 1.13.0
+* Refactored get_forum_list template tag
+* Minor updates for Python3 compatibility
+
 ## 1.12.2
 * Corrected urlparse import
 

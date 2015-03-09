@@ -127,32 +127,10 @@ def get_topic_list(num=10, top_items=False):
     return topics
 
 
-class ForumNameNode(template.Node):
-    def __init__(self, varname):
-        self.varname = varname
-
-    def __repr__(self):
-        return "<Forum Node>"
-
-    def render(self, context):
-        context[self.varname] = Forum.objects.values('name', 'slug', 'category__name')
-        return ''
-
-
-class GetForumNames:
+@register.assignment_tag
+def get_forum_list():
     """
+    Returns simple list of forum names, slugs and category names.
     {% get_forum_list as forum_list %}
     """
-    def __init__(self, tag_name):
-        self.tag_name = tag_name
-
-    def __call__(self, parser, token):
-        bits = token.contents.split()
-        if len(bits) != 3:
-            raise template.TemplateSyntaxError, "'%s' tag takes two arguments" % bits[0]
-        if bits[1] != "as":
-            raise template.TemplateSyntaxError, "First argument to '%s' tag must be 'as'" % bits[0]
-        return ForumNameNode(bits[2])
-
-
-register.tag('get_forum_list', GetForumNames('get_forum_list'))
+    return Forum.objects.values('name', 'slug', 'category__name')
