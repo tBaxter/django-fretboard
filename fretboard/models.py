@@ -23,7 +23,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "Categories"
-        db_table      = 'forum_category'
+        db_table = 'forum_category'
 
     def __unicode__(self):
         return self.name
@@ -42,13 +42,20 @@ class Forum(models.Model):
     """
     Groups and organizes topics. Admin-created.
     """
-    category            = models.ForeignKey(Category, verbose_name="Forum Category")
-    name                = models.CharField(max_length=255, verbose_name="Forum Name")
-    slug                = models.SlugField(max_length=255)
-    description         = models.CharField(max_length=255, verbose_name="Forum Description")
-    order               = models.PositiveSmallIntegerField(default=0, help_text="Order of forums on the category list")
-    message             = models.TextField('Admin message', blank=True, help_text="If you need to post a message for all of the forum")
-    is_closed           = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, verbose_name="Forum Category")
+    name = models.CharField(max_length=255, verbose_name="Forum Name")
+    slug = models.SlugField(max_length=255)
+    description = models.CharField(max_length=255, verbose_name="Forum Description")
+    order = models.PositiveSmallIntegerField(
+        default=0,
+        help_text="Order of forums on the category list"
+    )
+    message = models.TextField(
+        'Admin message',
+        blank=True,
+        help_text="If you need to post a message for all of the forum"
+    )
+    is_closed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -57,7 +64,7 @@ class Forum(models.Model):
         return self.name
 
     class Meta:
-        db_table      = 'forum_forum'
+        db_table = 'forum_forum'
 
     @models.permalink
     def get_absolute_url(self):
@@ -76,27 +83,35 @@ class Topic(models.Model):
     http://stackoverflow.com/questions/4594229/mysql-integer-vs-datetime-index
 
     """
-    forum            = models.ForeignKey(Forum)
-    name             = models.CharField(max_length=255, verbose_name="Topic Title")
-    slug             = models.SlugField(max_length=255)
+    forum = models.ForeignKey(Forum)
+    name = models.CharField(max_length=255, verbose_name="Topic Title")
+    slug = models.SlugField(max_length=255)
 
-    created          = models.DateTimeField(auto_now_add=True)
-    created_int      = models.IntegerField(editable=False, help_text="Stores created as ordinal + hour as an integer for faster searching")
-    modified         = models.DateTimeField(auto_now_add=True, help_text="Will be manually changed so every edit doesn't alter the modified time.")
-    modified_int     = models.IntegerField(editable=False, help_text="Stores modified as ordinal + hour as an integer for faster searching")
+    created = models.DateTimeField(auto_now_add=True)
+    created_int = models.IntegerField(
+        editable=False,
+        help_text="Stores created as ordinal + hour as an integer for faster searching"
+    )
+    modified = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Will be manually changed so every edit doesn't alter the modified time."
+    )
+    modified_int = models.IntegerField(
+        editable=False,
+        help_text="Stores modified as ordinal + hour as an integer for faster searching"
+    )
 
-    is_sticky        = models.BooleanField(blank=True, default=False)
-    is_locked        = models.BooleanField(blank=True, default=False)
+    is_sticky = models.BooleanField(blank=True, default=False)
+    is_locked = models.BooleanField(blank=True, default=False)
 
-    user             = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, editable=False)
 
     redirect_url = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text = "If set, traffic to this topic will redirect to the given URL."
+        help_text="If set, traffic to this topic will redirect to the given URL."
     )
-
 
     objects = TopicManager()
 
@@ -107,8 +122,8 @@ class Topic(models.Model):
         return self.name
 
     class Meta:
-        db_table      = 'forum_topic'
-        ordering      = ['-modified_int']
+        db_table = 'forum_topic'
+        ordering = ['-modified_int']
 
     def get_absolute_url(self):
         """
@@ -179,27 +194,31 @@ class Topic(models.Model):
         """
         Gets first image from post set.
         """
-        posts_with_images =  self.post_set.filter(image__gt='')
+        posts_with_images = self.post_set.filter(image__gt='')
         if posts_with_images:
             return posts_with_images[0].image
 
 
 class Post(BaseUserContentModel):
     topic = models.ForeignKey(Topic)
-    post_date_int = models.IntegerField(editable=False, null=True, help_text="Stores an integer of post_date as ordinal + hour for faster searching")
+    post_date_int = models.IntegerField(
+        editable=False,
+        null=True,
+        help_text="Stores an integer of post_date as ordinal + hour for faster searching."
+    )
     quote = models.ForeignKey('self', null=True, blank=True)
 
     image = ThumbnailerImageField(
-        upload_to = set_img_path,
-        help_text = "Image size should be a minimum of 720px and no more than 2000px (width or height)",
+        upload_to=set_img_path,
+        help_text="Image size should be a minimum of 720px and no more than 2000px wide.",
         blank=True,
         null=True
     )
 
     class Meta:
         get_latest_by = "id"
-        ordering      = ('id',)
-        db_table      = 'forum_post'
+        ordering = ('id',)
+        db_table = 'forum_post'
 
     def __unicode__(self):
         return unicode(self.topic)
@@ -218,7 +237,7 @@ class Post(BaseUserContentModel):
         """
         topic = self.topic
         topic_page = topic.post_set.filter(id__lt=self.id).count() / get_paginate_by() + 1
-        return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page , self.id)
+        return "{0}page{1}/#post-{2}".format(topic.get_short_url(), topic_page, self.id)
 
     @cached_property
     def author(self):
@@ -235,8 +254,8 @@ class Post(BaseUserContentModel):
     def avatar(self):
         try:
             avatar_url = self.user.avatar.url
-        except ValueError: # catch avatar url does not exist
-            avatar_url = '/img/avatars/default.jpg'
+        except ValueError:  # catch avatar url does not exist
+            avatar_url = '%s/img/avatars/default.jpg' % settings.MEDIA_URL
         return avatar_url
 
     @cached_property

@@ -1,3 +1,7 @@
+## 1.14.0
+* PEP-8 cleanup
+* Switched to new Tango image sizing names.
+
 ## 1.13.0
 * Refactored get_forum_list template tag
 * Minor updates for Python3 compatibility

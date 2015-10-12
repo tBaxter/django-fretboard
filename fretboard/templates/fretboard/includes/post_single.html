@@ -26,7 +26,7 @@
     {% if q %}
       <blockquote class="clearfix" cite="#post-{{ obj.id }}">
         {% if q.image %}
-          <figure data-deferred-load="{{ q.image.t_540u.url }}"></figure>
+          <figure data-deferred-load="{{ q.image.seven_col_vert.url }}"></figure>
         {% endif %}
 
         {{ q.text_formatted|safe }}
@@ -36,10 +36,10 @@
     {% endif %}
   {% endwith %}
   {% if obj.image %}
-    <figure data-deferred-load="{{ obj.image.t_540u.url }}">
+    <figure data-deferred-load="{{ obj.image.seven_col_vert.url }}">
   </figure>
   {% endif %}
 
   {{ obj.text_formatted|safe }}
-  
+
 </section>
