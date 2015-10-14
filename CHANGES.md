@@ -1,3 +1,6 @@
+## 1.15.0
+* Better static asset handling
+
 ## 1.14.0
 * PEP-8 cleanup
 * Switched to new Tango image sizing names.

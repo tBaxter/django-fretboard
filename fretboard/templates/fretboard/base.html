@@ -4,7 +4,7 @@
 {% block title %}{{ site_name }} Forums {% endblock %}
 
 {% block extrahead %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/fretboard.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}fretboard/fretboard.css">
 {% endblock %}
 
 {% block bodyid %}board{% endblock %}
@@ -28,18 +28,18 @@
       <a href="{% url 'fretboard_search' %}" id="search-box-trigger">Search</a>
       <form action="{% url 'fretboard_search' %}" method="get" class="boxedform" id="forum_search">
         <p>
-          <label for="id_name">Topic name:</label> 
+          <label for="id_name">Topic name:</label>
           <input type="text" name="name" value="" id="id_name" />
         </p>
         <p>
-          <label for="id_text">Post text:</label> 
+          <label for="id_text">Post text:</label>
           <input type="text" name="text" id="id_text" />
         </p>
         <p class="submit">
           <input type="submit" value="search">
         </p>
         <p class="meta">Note: Topic search is much faster. Probably works better, too.</p>
-      </form> 
+      </form>
     </li>
   {% endif %}
   <select class="url-selector">
@@ -56,21 +56,20 @@
   </select>
 {% endblock %}
 
-
 {% block extrascript %}
   <script src="{{ STATIC_URL }}js/gp_markitup-ck.js"></script>
-  <script src ="/media/js/libs/lscache.js"></script>
+  <script src ="{{ STATIC_URL }}libs/lscache.js"></script>
   <script>
     {% block init_forum_js %}{% endblock %}
     {% if user.auto_load_forum %}
-      var page = {% firstof page 1 %};
-      var original_page = page;
-      var prev_page = original_page - 1;
-      var loadable = true;
-      var current_page = $('span.current_page');
-      var loaded = [page];
-      var page_max = {{ page_obj.paginator.num_pages }} -1;
+      var page = {% firstof page 1 %},
+          original_page = page,
+          prev_page = original_page - 1,
+          loadable = true,
+          current_page = $('span.current_page'),
+          loaded = [page],
+          page_max = {{ page_obj.paginator.num_pages }} -1;
     {% endif %}
   </script>
-  <script src="{{ STATIC_URL }}js/fretboard.js"></script>
+  <script src="{{ STATIC_URL }}fretboard/fretboard.js"></script>
 {% endblock %}
