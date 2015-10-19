@@ -1,6 +1,9 @@
+/* global confirm, gp_markdown_settings, lscache, _gaq, page, topic_short_url, loaded, loadable,
+   current_page, original_page, page_max
+*/
+
 var $main = $('#content'),
     main_height   = $main.outerHeight(),
-    $forum_search = $('#forum_search'),
     $img_field    = $('#id_image').closest('p');
 
 // extract query parameters by name. Used for local storage
@@ -12,18 +15,9 @@ function urlParams(name){
   return results[1] || 0;
 }
 
-
 $img_field.hide().addClass('breakout');
 
-// Hide/show forum search
-$forum_search.hide();
-$('#search-box-trigger').click(function(e){
-    e.preventDefault();
-    $forum_search.slideToggle();
-});
-
-
-// Confirm toxic topic clicks. 
+// Confirm toxic topic clicks.
 // Note: toxic post clicks are handled side-wide by the comment-list handler.
 // Toxic post toggle
 $('#topic_list article.toxic').click(function(e) {
@@ -38,14 +32,13 @@ $('form.toxic input[type=submit]').click(function(e) {
   }
 });
 
-
 // INIT markitup
-$("#reply #id_text").markItUp(gp_markdown_settings);
+$('#reply #id_text').markItUp(gp_markdown_settings);
 
 // Admin/moderation links
 $('.tool_trigger').click(function() {
-    $(this).hide();
-    $(this).parent().find('.post-admin').show();
+  $(this).hide();
+  $(this).parent().find('.post-admin').show();
 });
 
 // localstorage of topics/views
@@ -56,7 +49,7 @@ if (Modernizr.localstorage && lscache) {
 
   // make sure topics and viewed exist in lscache
   if (!topics) {
-      topics = [];
+    topics = [];
   }
   if (new_topic && new_topic !== null && $.inArray(new_topic, topics) === -1) {
     topics.push(new_topic); // new topics
@@ -79,7 +72,7 @@ if (Modernizr.localstorage && lscache) {
 }
 
 // Dropdown avatars
-$("#comment-list .avatar-hold a").each(function() {
+$('#comment-list .avatar-hold a').each(function() {
   var appended = false;
   var $container = $(this).parent();
   $(this).click(function(e) {
@@ -89,7 +82,7 @@ $("#comment-list .avatar-hold a").each(function() {
         var results = '<ul class="profile_preview fancy"><li>' + data.name + '</li>' +
            '<li><strong>Joined:</strong> '+ data.joined +'</li>';
         if (data.location) {
-          results += "<li><strong>Location:</strong> " + data.location +'</li>';
+          results += '<li><strong>Location:</strong> ' + data.location + '</li>';
         }
         if (data.website) {
           results += '<li><a href="' + data.website +'">Web Site</a></li>';
@@ -106,22 +99,20 @@ $("#comment-list .avatar-hold a").each(function() {
 });
 
 // pop-in place reply box
-$("ul.postcontrols li a[href=#reply]").click(function(e){
+$('ul.postcontrols li a[href=#reply]').click(function(e){
   e.preventDefault();
   $(this).closest('footer').append($('#reply').slideDown('fast'));
 });
 
-$('#reply').on('click touchend', 'li.icon-photo', function(e) {
+$('#reply').on('click touchend', 'li.icon-photo', function() {
   $img_field.toggle();
 });
 
-// helper function for infinite scrollers 
+// helper function for infinite scrollers
 // updates vars post-load
-
-function updatePostLoad(url, newHash) {
-  loadable=true;
+function updatePostLoad() {
   main_height = $main.outerHeight();
-  if (typeof(_gaq) != 'undefined'){
+  if (typeof(_gaq) !== 'undefined'){
     _gaq.push(['_trackPageview']);
   }
   //if (Modernizr.history) {
@@ -130,9 +121,9 @@ function updatePostLoad(url, newHash) {
 }
 
 function load_topics() {
-  var url        = window.location.pathname + '?page=' + page,
-      $topicList = $('#topic_list');
-      newHash    = 'page- '+ page;
+  var url = window.location.pathname + '?page=' + page,
+    $topicList = $('#topic_list'),
+    newHash    = 'page- ' + page;
 
   $.get(url, function(data) {
     $topicList.append('<h1 id="#'+ newHash +'">Page '+ page + '</h1>' + data);
@@ -141,7 +132,7 @@ function load_topics() {
 }
 
 function load_posts() {
-  var url          = topic_short_url + page +'/',
+  var url = topic_short_url + page +'/',
       $commentList = $('#comment-list'),
       newHash    = 'page- '+ page;
 
@@ -155,7 +146,7 @@ function load_posts() {
 }
 
 // check for loading of new content.
-if (typeof loadable != 'undefined' && loadable === true) {
+if (typeof loadable !== 'undefined' && loadable === true) {
   var didScroll = false;
 
   $(window).scroll(function() {
@@ -165,14 +156,14 @@ if (typeof loadable != 'undefined' && loadable === true) {
   setInterval(function() {
     if ( didScroll ) {
       didScroll = false;
-      main_offset = getYOffset();
+      var main_offset = getYOffset();
       if (main_offset > (main_height * 0.75) && loadable === true && page <= page_max) {
-        loadable=false;
+        loadable = false;
         page += 1;
-        if (typeof topiclist != 'undefined') {
+        if (typeof topiclist !== 'undefined') {
           load_topics();
         }
-        if (typeof postlist != 'undefined' && $.inArray(page+1, loaded) === -1) {
+        if (typeof postlist !== 'undefined' && $.inArray(page+1, loaded) === -1) {
           load_posts();
         }
       }

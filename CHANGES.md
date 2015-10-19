@@ -1,3 +1,6 @@
+## 1.15.1
+* JS cleanup
+
 ## 1.15.0
 * Better static asset handling
 
