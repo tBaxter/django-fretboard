@@ -7,7 +7,7 @@ with open('docs/requirements.txt') as f:
 
 setup(
     name='django-fretboard',
-    version='1.15.1',
+    version='1.16.1',
     author=u'Tim Baxter',
     author_email='mail.baxter@gmail.com',
     url='http://github.com/tBaxter/django-fretboard',

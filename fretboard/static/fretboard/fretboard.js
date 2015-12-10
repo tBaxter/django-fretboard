@@ -1,4 +1,4 @@
-/* global confirm, gp_markdown_settings, lscache, _gaq, page, topic_short_url, loaded, loadable,
+/* global confirm, lscache, _gaq, page, topic_short_url, loaded, loadable,
    current_page, original_page, page_max
 */
 
@@ -31,9 +31,6 @@ $('form.toxic input[type=submit]').click(function(e) {
     $(this).closest('form').find('textarea').val('');
   }
 });
-
-// INIT markitup
-$('#reply #id_text').markItUp(gp_markdown_settings);
 
 // Admin/moderation links
 $('.tool_trigger').click(function() {

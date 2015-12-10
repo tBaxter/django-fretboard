@@ -8,20 +8,22 @@
 {% block bodyid %}topics{% endblock %}
 
 {% block content %}
+  {% comment %}
+    Somewhere on the page you should have a login button.
+    Also note that the check below expects the tango shared context processor.
+    You can change it out for your own code as you see fit.
+  {% endcomment %}
+
   {% if authenticated_request and can_add_topic and forum_slug %}
     <a href="{% url 'add_topic' forum_slug %}" class="button right icon-add">
       Add A Topic
     </a>
-  {% else %}
-    {% if not authenticated_request %}
-      {% include "includes/signin_reg.html" %}
-    {% endif %}
   {% endif %}
 
   <h1>{{ forum_name }}{% ifnotequal page 1 %} page {{ page }}{% endifnotequal %}</h1>
-  
+
   {% if admin_msg %}<h2 class="alert">{{ admin_msg|safe }}</h2>{% endif %}
-  
+
   <div id="topic_list">
     {% block topic_list %}
       {% include "fretboard/includes/topic_list.html" %}

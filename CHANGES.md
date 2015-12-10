@@ -1,3 +1,6 @@
+## 1.16.0 -- 16 Nov 2015
+* Removed custom markitup implementation in favor of implementation from tango-shared-core.
+
 ## 1.15.1
 * JS cleanup
 
