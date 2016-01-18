@@ -10,11 +10,11 @@ class TestFretboardCrudViews(TestCase):
     """
     Tests for Creation, Update and Deletion views.
     """
-    fixtures = ['fretboard_test_data.json']
+    fixtures = ['fretboard_test_data.json', 'auth_users.json']
 
     def setUp(self):
-        self.forum    = Forum.objects.get(id=1)
-        self.topic    = Topic.objects.get(id=1)
+        self.forum = Forum.objects.get(id=1)
+        self.topic = Topic.objects.get(id=1)
 
     @unittest.skip("Template is overly opinionated")
     def test_topic_addition(self):
@@ -26,7 +26,8 @@ class TestFretboardCrudViews(TestCase):
             'text': "This is a new topic that was created via the testing suite."
         }
         current_topic_count = self.forum.topic_set.count()
-        # if this is a GET request, we should get bounced back to the form without creating a new post.
+        # if this is a GET request, we should get bounced back
+        # to the form without creating a new post.
         resp = self.client.get(reverse('add_topic', args=[self.forum.slug]), post_data)
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp['Location'], reverse('add_topic', args=[self.forum.slug]))
@@ -45,8 +46,8 @@ class TestFretboardGeneralViews(TestCase):
     fixtures = ['fretboard_test_data.json']
 
     def setUp(self):
-        self.forum    = Forum.objects.get(id=1)
-        self.topic    = Topic.objects.get(id=1)
+        self.forum = Forum.objects.get(id=1)
+        self.topic = Topic.objects.get(id=1)
 
     @unittest.skip("Template is overly opinionated")
     def test_index(self):
@@ -83,7 +84,9 @@ class TestFretboardGeneralViews(TestCase):
         """
         Test for validiity of topic post list.
         """
-        resp = self.client.get(reverse('post_short_url', args=[self.forum.slug, self.topic.slug, self.topic.id]))
+        resp = self.client.get(
+            reverse('post_short_url', args=[self.forum.slug, self.topic.slug, self.topic.id])
+        )
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('object_list' in resp.context)
         self.assertTrue('locked' in resp.context)
@@ -124,8 +127,8 @@ class TestFretboardModerationViews(TestCase):
     fixtures = ['fretboard_test_data.json']
 
     def setUp(self):
-        self.forum    = Forum.objects.get(id=1)
-        self.topic    = Topic.objects.get(id=1)
+        self.forum = Forum.objects.get(id=1)
+        self.topic = Topic.objects.get(id=1)
 
     @unittest.skip("Template is overly opinionated")
     def test_topic_move(self):
