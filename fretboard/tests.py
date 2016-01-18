@@ -43,7 +43,7 @@ class TestFretboardCrudViews(TestCase):
 
 
 class TestFretboardGeneralViews(TestCase):
-    fixtures = ['fretboard_test_data.json']
+    fixtures = ['fretboard_test_data.json', 'auth_users.json']
 
     def setUp(self):
         self.forum = Forum.objects.get(id=1)
@@ -124,7 +124,7 @@ class TestFretboardModerationViews(TestCase):
     """
     Tests for moderation views.
     """
-    fixtures = ['fretboard_test_data.json']
+    fixtures = ['fretboard_test_data.json', 'auth_users.json']
 
     def setUp(self):
         self.forum = Forum.objects.get(id=1)
