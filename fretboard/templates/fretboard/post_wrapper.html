@@ -37,7 +37,7 @@
   {% else %}
     {% with topic as object %}
 
-      {% social_links object user authenticated_request vote_down=True vote_down_msg="This is a terrible topic, and I wish it would just go away." %}
+      {% social_links object user authenticated_request downable=True vote_down_msg="This is a terrible topic, and I wish it would just go away." %}
     {% endwith %}
 
     {% if authenticated_request and user.is_active %}
