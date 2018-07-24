@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django import template
 
-from fretboard.helpers import clean_text, format_post as format_post_text
+from tango_shared.utils.sanetize import clean_text, format_text
 from fretboard.models import Forum, Topic
 from fretboard.settings import PAGINATE_BY
 
@@ -83,11 +83,11 @@ def topic_quick_links(context, topic, latest, last_seen_time):
         else:
             page_link = u'<a href="%spage%%s/">%%s</a>' % topic.get_short_url()
             if pages < 4:
-                page_links = u' '.join([page_link % (page, page) for page in xrange(1, pages + 1)])
+                page_links = u' '.join([page_link % (page, page) for page in range(1, pages + 1)])
             else:
                 page_links = u' '.join(
                     [page_link % (1, 1), u'<small>&hellip;</small>'] +
-                    [page_link % (page, page) for page in xrange(pages - 1, pages + 1)]
+                    [page_link % (page, page) for page in range(pages - 1, pages + 1)]
                 )
             output_text += '{0}{1}&#9658;</a>'.format(page_links, last_link)
 
@@ -107,7 +107,7 @@ def format_post(value):
     However, in some cases, such as forum archive, we'll do it real-time.
     """
     text = clean_text(value)
-    return format_post_text(text)
+    return format_text(text)
 
 
 @register.assignment_tag

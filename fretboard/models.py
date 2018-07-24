@@ -200,6 +200,9 @@ class Topic(models.Model):
 
 
 class Post(BaseUserContentModel):
+    """
+    Post text is cleaned on save() through the BaseUserContentModel
+    """
     topic = models.ForeignKey(Topic)
     post_date_int = models.IntegerField(
         editable=False,

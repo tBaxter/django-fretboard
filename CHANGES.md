@@ -1,3 +1,6 @@
+## 1.16.4
+* Cleaned up or removed deprecated code
+
 ## 1.16.3
 * Updated tests
 
