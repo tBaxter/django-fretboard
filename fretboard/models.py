@@ -42,7 +42,11 @@ class Forum(models.Model):
     """
     Groups and organizes topics. Admin-created.
     """
-    category = models.ForeignKey(Category, verbose_name="Forum Category", on_delete="CASCADE")
+    category = models.ForeignKey(
+        Category, 
+        verbose_name="Forum Category", 
+        on_delete="CASCADE"
+    )
     name = models.CharField(max_length=255, verbose_name="Forum Name")
     slug = models.SlugField(max_length=255)
     description = models.CharField(max_length=255, verbose_name="Forum Description")
@@ -227,9 +231,6 @@ class Post(BaseUserContentModel):
         get_latest_by = "id"
         ordering = ('id',)
         db_table = 'forum_post'
-
-    def __unicode__(self):
-        return unicode(self.topic)
 
     def __str__(self):
         return self.topic

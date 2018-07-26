@@ -1,3 +1,9 @@
+## 1.16.6
+* Corrected reverse() import
+
+## 1.16.5
+* Updated for on_delete
+
 ## 1.16.4
 * Cleaned up or removed deprecated code
 
