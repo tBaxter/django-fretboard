@@ -1,125 +1,55 @@
-from django.conf.urls import *
+from django.urls import path
 
-from .views import *
+from .views import moderate, MemberTopics, CommentedTopics, RecentlyViewed, \
+  add_topic, add_post
 
 
-urlpatterns = patterns('fretboard.views.moderate',
-  url(
-    regex=r'^moderation/(?P<topic_id>[0-9]+)/(?P<forum_slug>[-\w]+)/$',
-    view='moderate',
-    name='mod_topic'),
-)
+urlpatterns = [
+  path(
+    'moderation/<int:topic_id>/<slug:forum_slug>/',
+    moderate,
+    name='mod_topic'
+  ),
+  # member urls
+  path('my-topics/', MemberTopics, name="member_topics"),
+  path('member-topics/<slug:user>/', MemberTopics, name="topics_for_user"),
+  path('my-commented-topics', CommentedTopics, name="commented_topics"),
+  path('recently-viewed', RecentlyViewed, name="recently_viewed"),
 
-### URLS for User
-urlpatterns += patterns('',
-  url(
-    name="member_topics",
-    regex=r'^my-topics/$',
-    view=MemberTopics.as_view()
-  ),
-  url(
-    name="topics_for_user",
-    regex=r'^member-topics/(?P<user>[-\w]+)/$',
-    view=MemberTopics.as_view()
-  ),
-  url(
-    name="commented_topics",
-    regex=r'^my-commented-topics/$',
-    view=CommentedTopics.as_view(),
-  ),
-  url(
-    name="recently_viewed",
-    regex=r'^recently-viewed/$',
-    view=RecentlyViewed.as_view()
-  ),
-)
-
-### CRUD Urls
-urlpatterns += patterns('fretboard.views.crud',
-  url(
-    r'^add-topic/$',
-    'add_topic',
-    name="generic_add_topic"
-  ),
-  url(
-    r'^(?P<forum_slug>[-\w]+)/add-topic/$',
-    'add_topic',
-    name="add_topic"
-  ),
-  url(
-    regex=r'^add_post/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/$',
-    view='add_post',
-    name="add_post"
-  ),
-  url(
-    regex=r'^add_post/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/(?P<p_id>[0-9]+)/$',
-    view='add_post',
+  # CRUD
+  path('add-topic/', add_topic, name="generic_add_topic"),
+  path('<slug:forum_slug>/add-topic/', add_topic, name="add_topic"),
+  path('add_post/<slug:slug:t_slug>/<int:int:t_id>/', add_post, name="add_post"),
+  path(
+    'add_post/<slug:slug:t_slug>/<int:int:t_id>/<int:p_id>/',
+    add_post,
     name="post_with_quote"
   ),
-  url(
-    regex=r'^edit_post/(?P<post_id>[0-9]+)/$',
-    view='edit_post',
-    name="edit_post"
-  ),
-  url(
-    regex=r'^delete_post/(?P<post_id>[0-9]+)/(?P<topic_id>[0-9]+)/$',
-    view='delete_post',
+  path('edit_post/<int:posint:t_id>/', edit_post, name="edit_post"),
+  path(
+    'delete_post/<int:posint:t_id>/<int:topic_id>/',
+    delete_post,
     name='delete_post'
   ),
-)
 
-urlpatterns += patterns('',
-  url(
-    r'^search/$',
-    ForumSearch.as_view(),
-    name='fretboard_search'
-  ),
-  url(
-    regex=r'^new-topics/$',
-    view=NewTopics.as_view(),
-    name="new_topics"
-  ),
-  url(
-    regex=r'^new-topics/page(?P<page>[0-9]+)/$',
-    view=NewTopics.as_view(),
-    name="new_topics_paginated"),
-
-  url(
-    regex=r'^latest-topics/$',
-    view=NewTopics.as_view(),
-    name="new_24_hours"
-  ),
-  url(
-    regex=r'^latest-topics/page(?P<page>[0-9]+)/$',
-    view=NewTopics.as_view(),
-    name="new_24_hours_paginated"
-  ),
+  path('search/', ForumSearch, name='fretboard_search'),
+  path('new-topics/', NewTopics, name="new_topics"),
+  path('new-topics/page<int:page>/', NewTopics, name="new_topics_paginated"),
+  path('latest-topics/', NewTopics, name="new_24_hours"),
+  path('latest-topics/page<int:page>/', NewTopics, name="new_24_hours_paginated"),
   # topic lists
-  url(
-    regex=r'^(?P<forum_slug>[-\w]+)/$',
-    view=TopicList.as_view(),
-    name="topic_list"
-  ),
-  url(
-    regex=r'^(?P<forum_slug>[-\w]+)/page(?P<page>[0-9]+)/$',
-    view=TopicList.as_view(),
-    name="topic_list_paginated"
-  ),
+  path('<slug:forum_slug>/', TopicList, name="topic_list"),
+  path('<slug:forum_slug>/page<int:page>/', TopicList, name="topic_list_paginated"),
   # post lists
-  url(
-    regex=r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/page(?P<page>[0-9]+)/$',
-    view=PostList.as_view(),
+  path(
+    '<slug:f_slug>/<slug:t_slug>/<int:t_id>/page<int:page>/',
+    PostList,
     name="post_list_paginated"
   ),
-  url(
-    regex=r'^(?P<f_slug>[-\w]+)/(?P<t_slug>[-\w]+)/(?P<t_id>[0-9]+)/$',
-    view=PostList.as_view(),
+  path(
+    '<slug:f_slug>/<slug:t_slug>/<int:t_id>/',
+    PostList,
     name="post_short_url"
   ),
-  # category list/index
-  url(
-    regex=r'^$',
-    view=CategoryList.as_view(),
-    name='fretboard_index'
-  ),
-)
+  path('', CategoryList, name='fretboard_index'),
+]

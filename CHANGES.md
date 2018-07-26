@@ -1,3 +1,6 @@
+## 1.17.0
+* Updated for Django 2.0 
+
 ## 1.16.6
 * Corrected reverse() import
 
