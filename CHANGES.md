@@ -1,3 +1,6 @@
+## 1.17.1
+* Fixed import
+
 ## 1.17.0
 * Updated for Django 2.0 
 

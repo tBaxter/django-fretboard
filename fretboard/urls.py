@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import moderate, MemberTopics, CommentedTopics, RecentlyViewed, \
-  add_topic, add_post
+  add_topic, add_post, edit_post, delete_post, ForumSearch, NewTopics, \
+  TopicList, PostList, CategoryList
 
 
 urlpatterns = [
