@@ -42,7 +42,7 @@ class Forum(models.Model):
     """
     Groups and organizes topics. Admin-created.
     """
-    category = models.ForeignKey(Category, verbose_name="Forum Category")
+    category = models.ForeignKey(Category, verbose_name="Forum Category", on_delete="CASCADE")
     name = models.CharField(max_length=255, verbose_name="Forum Name")
     slug = models.SlugField(max_length=255)
     description = models.CharField(max_length=255, verbose_name="Forum Description")
@@ -83,7 +83,7 @@ class Topic(models.Model):
     http://stackoverflow.com/questions/4594229/mysql-integer-vs-datetime-index
 
     """
-    forum = models.ForeignKey(Forum)
+    forum = models.ForeignKey(Forum, on_delete="CASCADE")
     name = models.CharField(max_length=255, verbose_name="Topic Title")
     slug = models.SlugField(max_length=255)
 
@@ -104,7 +104,12 @@ class Topic(models.Model):
     is_sticky = models.BooleanField(blank=True, default=False)
     is_locked = models.BooleanField(blank=True, default=False)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        blank=True, null=True, 
+        editable=False, 
+        on_delete="CASCADE"
+    )
 
     redirect_url = models.CharField(
         max_length=255,
@@ -203,13 +208,13 @@ class Post(BaseUserContentModel):
     """
     Post text is cleaned on save() through the BaseUserContentModel
     """
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic, on_delete="CASCADE")
     post_date_int = models.IntegerField(
         editable=False,
         null=True,
         help_text="Stores an integer of post_date as ordinal + hour for faster searching."
     )
-    quote = models.ForeignKey('self', null=True, blank=True)
+    quote = models.ForeignKey('self', null=True, blank=True, on_delete="CASCADE")
 
     image = ThumbnailerImageField(
         upload_to=set_img_path,
