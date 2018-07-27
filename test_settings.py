@@ -5,9 +5,6 @@ SECRET_KEY = "lorem ipsum"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            'fretboard/test_templates',
-        ],
         'APP_DIRS': True,
     },
 ]
