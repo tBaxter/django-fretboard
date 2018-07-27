@@ -5,13 +5,10 @@ django-fretboard
 
 Django-Fretboard is a fork of the forums used on gretschpages.com/forum/
 
-It is built for Django 1.5+, and is not compatible with older versions of Django.
-
-It has been tested in Python 2.7 and 3.4 and up to Django 1.7.1
-
+It is currently built for Django 2.0+, and is not compatible with older versions of Django. It has also been updated to use Python 3, because seriously, why wouldn't you at this point?
 
 ### Settings
-There are a few settings you may wish to override:
+There are a few settings you may wish to override in your project settings.py
 
 * PAGINATE_BY: defaults to 25 
 * FORUM_BASE_NAME: defaults to site name
