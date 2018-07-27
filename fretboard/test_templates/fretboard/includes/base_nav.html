@@ -1,0 +1,8 @@
+{% load fretboard_tags %}
+
+<li>{% get_new_topics_count as topic_count %}
+  <a href="{% url 'new_topics' %}">
+    <span class="left counter" title="updated recently">{{ topic_count }}</span>
+    New topics
+  </a>
+</li>

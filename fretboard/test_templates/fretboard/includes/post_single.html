@@ -1,0 +1,45 @@
+{% load fretboard_tags tango_time_tags %}
+
+<header {% if obj.id in newposts %}class="new"{% endif %}{% if obj.id == new_post_id %}id="first-new-post"{% endif %}>
+  {% if start_number %}
+    <span class="counter">{{ forloop.counter0|add:start_number }}</span>
+  {% endif %}
+  <span class="avatar-hold">
+    {% url 'view_profile_by_id' obj.user_id as author_url %}
+    <a href="{{ author_url }}" rel="author">
+      <span class="avatar" data-deferred-load="{{ obj.avatar }}">
+      </span>
+      {{ obj.author_display_name }}
+    </a>
+  </span>
+  {% with obj.post_date as d %}
+    <time datetime="{{ d|date:"Y-m-d\TH:i:00" }}" title="{{ d }}" pubdate>
+      <!--googleoff: all-->
+        {{ d|short_timesince }} ago
+      <!--googleon: all-->
+    </time>
+  {% endwith %}
+</header>
+
+<section class="post clearfix">
+  {% with obj.quote as q %}
+    {% if q %}
+      <blockquote class="clearfix" cite="#post-{{ obj.id }}">
+        {% if q.image %}
+          <figure data-deferred-load="{{ q.image.seven_col_vert.url }}"></figure>
+        {% endif %}
+
+        {{ q.text_formatted|safe }}
+
+        <footer class="right"> &ndash; {{ q.author_display_name }}</footer>
+      </blockquote>
+    {% endif %}
+  {% endwith %}
+  {% if obj.image %}
+    <figure data-deferred-load="{{ obj.image.seven_col_vert.url }}">
+  </figure>
+  {% endif %}
+
+  {{ obj.text_formatted|safe }}
+
+</section>
