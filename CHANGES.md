@@ -1,7 +1,8 @@
 ## 1.17.2
-* Removed deprecated assignement tag.
+* Removed deprecated assignment tag.
 * Updated requirements and Travis config
 * Updated README
+* Minor test updates
 
 ## 1.17.1
 * Fixed import
