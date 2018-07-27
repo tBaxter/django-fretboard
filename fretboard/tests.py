@@ -16,10 +16,6 @@ class TestFretboardCrudViews(TestCase):
         self.forum = Forum.objects.get(id=1)
         self.topic = Topic.objects.get(id=1)
 
-    def test_forum_index(self):
-        resp = self.client.get(reverse('fretboard_index'))
-        self.assertEqual(resp.status_code, 200)
-
     @unittest.skip("Template is overly opinionated")
     def test_topic_addition(self):
         """
@@ -53,7 +49,6 @@ class TestFretboardGeneralViews(TestCase):
         self.forum = Forum.objects.get(id=1)
         self.topic = Topic.objects.get(id=1)
 
-    @unittest.skip("Template is overly opinionated")
     def test_index(self):
         """
         Test index (category list)
@@ -62,7 +57,6 @@ class TestFretboardGeneralViews(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('forums' in resp.context)
 
-    @unittest.skip("Template is overly opinionated")
     def test_topic_list(self):
         """
         Test general, category-based topic list.
