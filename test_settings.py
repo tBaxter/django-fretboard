@@ -6,7 +6,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            'test_templates',
+            'fretboard/test_templates',
         ],
         'APP_DIRS': True,
     },
