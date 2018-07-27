@@ -40,6 +40,7 @@ class MemberTopics(BaseTopicList):
             'forum_name' : 'Topics for %s' % self.topic_user.display_name,
         })
         return context
+member_topics = MemberTopics.as_view()
 
 
 class CommentedTopics(MemberTopics):
@@ -69,6 +70,7 @@ class CommentedTopics(MemberTopics):
             'forum_name' : "Topics you commented on",
         })
         return context
+commented_topics = CommentedTopics.as_view()
 
 
 class RecentlyViewed(MemberTopics):
@@ -92,3 +94,4 @@ class RecentlyViewed(MemberTopics):
             'forum_name' : "Recently viewed",
         })
         return context
+recently_viewed = RecentlyViewed.as_view()

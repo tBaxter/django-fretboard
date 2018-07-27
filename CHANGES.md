@@ -1,3 +1,7 @@
+## 1.17.3
+* Corrected URL calls
+* Added test
+
 ## 1.17.2
 * Removed deprecated assignment tag.
 * Updated requirements and Travis config

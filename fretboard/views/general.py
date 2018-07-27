@@ -24,7 +24,7 @@ class CategoryList(ListView):
             'FORUM_BASE_NAME' : FORUM_BASE_NAME
         })
         return context
-
+category_list = CategoryList.as_view()
 
 class BaseTopicList(ListView):
     """
@@ -80,6 +80,7 @@ class NewTopics(BaseTopicList):
             'forum_name' : "Latest active topics",
         })
         return context
+new_topics = NewTopics.as_view()
 
 
 class TopicList(BaseTopicList):
@@ -100,6 +101,7 @@ class TopicList(BaseTopicList):
             'can_add_topic': True
         })
         return context
+topic_list = TopicList.as_view()
 
 
 class PostList(ListView):
@@ -162,7 +164,7 @@ class PostList(ListView):
             'form'          : PostForm(),
         })
         return context
-
+post_list = PostList.as_view()
 
 class ForumSearch(BaseTopicList):
     forum_name = 'Forum search'
@@ -210,3 +212,4 @@ class ForumSearch(BaseTopicList):
             'page': self.page,
         })
         return context
+forum_search = ForumSearch.as_view()

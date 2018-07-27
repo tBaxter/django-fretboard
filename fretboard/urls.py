@@ -1,8 +1,10 @@
 from django.urls import path
 
-from .views import moderate, MemberTopics, CommentedTopics, RecentlyViewed, \
-  add_topic, add_post, edit_post, delete_post, ForumSearch, NewTopics, \
-  TopicList, PostList, CategoryList
+from .views import moderate, \
+  member_topics, commented_topics, recently_viewed, \
+  add_topic, add_post, edit_post, delete_post, \
+  topic_list, post_list, category_list, \
+  forum_search, new_topics
 
 
 urlpatterns = [
@@ -12,15 +14,19 @@ urlpatterns = [
     name='mod_topic'
   ),
   # member urls
-  path('my-topics/', MemberTopics, name="member_topics"),
-  path('member-topics/<slug:user>/', MemberTopics, name="topics_for_user"),
-  path('my-commented-topics', CommentedTopics, name="commented_topics"),
-  path('recently-viewed', RecentlyViewed, name="recently_viewed"),
+  path('my-topics/', member_topics, name="member_topics"),
+  path('member-topics/<slug:user>/', member_topics, name="topics_for_user"),
+  path('my-commented-topics', commented_topics, name="commented_topics"),
+  path('recently-viewed', recently_viewed, name="recently_viewed"),
 
   # CRUD
   path('add-topic/', add_topic, name="generic_add_topic"),
   path('<slug:forum_slug>/add-topic/', add_topic, name="add_topic"),
-  path('add_post/<slug:slug:t_slug>/<int:int:t_id>/', add_post, name="add_post"),
+  path(
+    'add_post/<slug:slug:t_slug>/<int:int:t_id>/',
+    add_post,
+    name="add_post"
+  ),
   path(
     'add_post/<slug:slug:t_slug>/<int:int:t_id>/<int:p_id>/',
     add_post,
@@ -33,24 +39,24 @@ urlpatterns = [
     name='delete_post'
   ),
 
-  path('search/', ForumSearch, name='fretboard_search'),
-  path('new-topics/', NewTopics, name="new_topics"),
-  path('new-topics/page<int:page>/', NewTopics, name="new_topics_paginated"),
-  path('latest-topics/', NewTopics, name="new_24_hours"),
-  path('latest-topics/page<int:page>/', NewTopics, name="new_24_hours_paginated"),
+  path('search/', forum_search, name='fretboard_search'),
+  path('new-topics/', new_topics, name="new_topics"),
+  path('new-topics/page<int:page>/', new_topics, name="new_topics_paginated"),
+  path('latest-topics/', new_topics, name="new_24_hours"),
+  path('latest-topics/page<int:page>/', new_topics, name="new_24_hours_paginated"),
   # topic lists
-  path('<slug:forum_slug>/', TopicList, name="topic_list"),
-  path('<slug:forum_slug>/page<int:page>/', TopicList, name="topic_list_paginated"),
+  path('<slug:forum_slug>/', topic_list, name="topic_list"),
+  path('<slug:forum_slug>/page<int:page>/', topic_list, name="topic_list_paginated"),
   # post lists
   path(
     '<slug:f_slug>/<slug:t_slug>/<int:t_id>/page<int:page>/',
-    PostList,
+    post_list,
     name="post_list_paginated"
   ),
   path(
     '<slug:f_slug>/<slug:t_slug>/<int:t_id>/',
-    PostList,
+    post_list,
     name="post_short_url"
   ),
-  path('', CategoryList, name='fretboard_index'),
+  path('', category_list, name='fretboard_index'),
 ]

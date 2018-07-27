@@ -16,6 +16,10 @@ class TestFretboardCrudViews(TestCase):
         self.forum = Forum.objects.get(id=1)
         self.topic = Topic.objects.get(id=1)
 
+    def test_forum_index(self):
+        resp = self.client.get(reverse('fretboard_index'))
+        self.assertEqual(resp.status_code, 200)
+
     @unittest.skip("Template is overly opinionated")
     def test_topic_addition(self):
         """
