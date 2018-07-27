@@ -1,17 +1,9 @@
-{% extends "fretboard/base.html" %}
 {% load fretboard_tags social_tags typogrify_tags voting_tags %}
 
 {% block title %}
   {{ topic.name }}
   {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %}:
   {{ forum_name }} :
-{% endblock %}
-
-{% block description %}'{{ topic.name }}'. Posted in {{ forum_name }} at {{ FORUM_BASE_NAME }} {% if page_obj.number != 1 %} (Page {{ page_obj.number }}){% endif %}
-{% endblock %}
-
-{% block canonical %}
-  <link rel="canonical" href="http://{{ site.domain }}{{ canonical_url }}">
 {% endblock %}
 
 {% block bodyid %}topic-detail{% endblock %}

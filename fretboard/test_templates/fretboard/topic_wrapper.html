@@ -7,9 +7,7 @@
 {% block bodyid %}topics{% endblock %}
 
 {% block content %}
-
   <h1>{{ forum_name }}{% ifnotequal page 1 %} page {{ page }}{% endifnotequal %}</h1>
-
   <div id="topic_list">
     {% block topic_list %}
       {% include "fretboard/includes/topic_list.html" %}
