@@ -54,6 +54,431 @@
     }
   },
   {
+    "model": "fretboard.topic",
+    "pk": 2,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic2",
+      "slug": "test-topic-2",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 3,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic3",
+      "slug": "test-topic-3",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 4,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic4",
+      "slug": "test-topic-4",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 5,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 5",
+      "slug": "test-topic-5",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 6,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 6",
+      "slug": "test-topic-6",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 7,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 7",
+      "slug": "test-topic-7",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 8,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 8",
+      "slug": "test-topic-8",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 0,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 9",
+      "slug": "test-topic-9",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 10,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 10",
+      "slug": "test-topic-10",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 11,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 11",
+      "slug": "test-topic-11",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 12,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 12",
+      "slug": "test-topic-12",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 13,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 13",
+      "slug": "test-topic-13",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 14,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 14",
+      "slug": "test-topic-14",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 15,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 15",
+      "slug": "test-topic-15",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 16,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 16",
+      "slug": "test-topic-16",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 17,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 17",
+      "slug": "test-topic-17",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 18,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 18",
+      "slug": "test-topic-18",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 19,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 19",
+      "slug": "test-topic-19",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 20,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 20",
+      "slug": "test-topic-20",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 21,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 21",
+      "slug": "test-topic-22",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 23,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 23",
+      "slug": "test-topic-23",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 24,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 24",
+      "slug": "test-topic-24",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 25,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 25",
+      "slug": "test-topic-25",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 26,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 25",
+      "slug": "test-topic-26",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
+    "model": "fretboard.topic",
+    "pk": 27,
+    "fields": {
+      "forum": 1,
+      "name": "Test topic 27",
+      "slug": "test-topic-27",
+      "created": "2012-11-18 00:30:33.789281",
+      "created_int": "1353220297",
+      "modified": "2012-11-18 00:30:33.789281",
+      "modified_int": "1353220297",
+      "is_sticky": 0,
+      "is_locked": 0,
+      "user": 1,
+      "redirect_url": ""
+    }
+  },
+  {
     "model": "fretboard.post",
     "pk": 1,
     "fields": {

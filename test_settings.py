@@ -2,13 +2,6 @@ import os
 
 SECRET_KEY = "lorem ipsum"
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'APP_DIRS': True,
-    },
-]
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +31,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+    },
+]
+"""
 TEMPLATE_DIRS = (
     'templates',
     os.path.join(os.path.dirname(__file__), '..', 'templates').replace('\\', '/')
 )
+
+"""
