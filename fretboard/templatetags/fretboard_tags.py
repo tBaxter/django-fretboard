@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django import template
 
 from tango_shared.utils.sanetize import clean_text, format_text
+
 from fretboard.models import Forum, Topic
 from fretboard.settings import PAGINATE_BY
 
@@ -17,7 +18,7 @@ def yesterday_timestamp():
 register = template.Library()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_new_topics_count(last_seen=None, for_member=False):
     """
     Returns count of new topics since last visit, or one day.
@@ -30,7 +31,7 @@ def get_new_topics_count(last_seen=None, for_member=False):
     return Topic.objects.filter(modified__gt=last_seen, user__id=for_member).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_active_topics_count(last_seen_timestamp=None):
     """
     Returns count of new topics since last visit, or one day.
@@ -110,7 +111,7 @@ def format_post(value):
     return format_text(text)
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_topic_list(num=10, top_items=False):
     """
     Returns a list of top recent topics, excluding less valuable forums.
@@ -127,7 +128,7 @@ def get_topic_list(num=10, top_items=False):
     return topics
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_forum_list():
     """
     Returns simple list of forum names, slugs and category names.
