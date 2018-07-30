@@ -11,7 +11,7 @@
       </a>
     {% endif %}
     {% for num in page_numbers %}
-      {% if num = page %}
+      {% if num == page %}
         <span class="current_page">{{ num }}</span>
       {% else %}
         <a href="{{ page_url }}?page={{ num }}" title="Page {{ num }}">
@@ -24,7 +24,7 @@
         ▶
       </a>
     {% endif %}
-    {% if pages > 4 and page != pages and slugtype = 'topic' %}
+    {% if pages > 4 and page != pages and slugtype == 'topic' %}
       <a href="{{ page_url }}?page={{ pages }}" title="Last" class="arrow">
         ▶▶
       </a>

@@ -1,3 +1,6 @@
+## 1.17.4
+* Corrected outdated template syntax
+
 ## 1.17.3
 * Corrected URL calls
 * Added test
