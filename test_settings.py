@@ -6,6 +6,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sites',
+    'tango-shared-core',
     'fretboard',
     'typogrify',
     'voting',
