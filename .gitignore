@@ -3,6 +3,10 @@ fretboard/views/.DS_Store
 
 fretboard/templatetags/.DS_Store
 
+build/
+
+dist/
+
 *.pyc
 
 .DS_Store

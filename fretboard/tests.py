@@ -57,7 +57,7 @@ class TestFretboardGeneralViews(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('forums' in resp.context)
 
-    def test_topic_list(self):
+    def test_category_topic_list(self):
         """
         Test general, category-based topic list.
         """
@@ -66,8 +66,15 @@ class TestFretboardGeneralViews(TestCase):
         self.assertTrue('object_list' in resp.context)
         self.assertTrue('page' in resp.context)
         self.assertTrue('lastseen_time' in resp.context)
+        self.assertTrue('forum_slug' in resp.context)
+        self.assertEqual(resp.context['forum_slug'], self.forum.slug)
+        self.assertTrue('forum_name' in resp.context)
+        self.assertEqual(resp.context['forum_name'], self.forum.name)
+        self.assertTrue('admin_msg' in resp.context)
+        self.assertEqual(resp.context['admin_msg'], self.forum.message)
+        self.assertTrue('can_add_topic' in resp.context)
+        self.assertEqual(resp.context['can_add_topic'], True)
 
-    @unittest.skip("Template is overly opinionated")
     def test_latest_topics(self):
         """
         Test of latest topics list.
@@ -77,25 +84,32 @@ class TestFretboardGeneralViews(TestCase):
         self.assertTrue('object_list' in resp.context)
         self.assertTrue('page' in resp.context)
 
-    @unittest.skip("Template is overly opinionated")
     def test_post_list(self):
         """
         Test for validiity of topic post list.
         """
-        resp = self.client.get(
-            reverse('post_short_url', args=[self.forum.slug, self.topic.slug, self.topic.id])
-        )
+        topic_url = reverse('post_short_url', args=[self.forum.slug, self.topic.slug, self.topic.id])
+        resp = self.client.get(topic_url)
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('object_list' in resp.context)
-        self.assertTrue('locked' in resp.context)
         self.assertTrue('topic' in resp.context)
+        self.assertEqual(resp.context['topic'], self.topic)
         self.assertTrue('topic_id' in resp.context)
+        self.assertEqual(resp.context['topic_id'], self.topic.id)
         self.assertTrue('topic_slug' in resp.context)
+        self.assertEqual(resp.context['topic_slug'], self.topic.slug)
+        self.assertTrue('locked' in resp.context)
+        self.assertEqual(resp.context['locked'], self.topic.is_locked)
         self.assertTrue('start_number' in resp.context)
         self.assertTrue('page' in resp.context)
         self.assertTrue('forum_slug' in resp.context)
+        self.assertEqual(resp.context['forum_slug'], self.forum.slug)
         self.assertTrue('forum_name' in resp.context)
+        self.assertEqual(resp.context['forum_name'], self.forum.name)
         self.assertTrue('form' in resp.context)
+        self.assertTrue('canonical_url' in resp.context)
+        self.assertEqual(resp.context['canonical_url'], self.topic.get_absolute_url())
+
 
     @unittest.skip("Template is overly opinionated")
     def test_topic_search(self):

@@ -1,0 +1,16 @@
+{% extends "fretboard/base.html" %}
+
+{% block content %}
+  <h1>Move Topic</h1>
+  <h2>Select a forum to which the topic "{{ topic.name }}" should be moved:</h2>
+  <form method="get" action=".">
+    {% csrf_token %}
+      <select name="forum">
+        {% for f in forums %}
+          <option value="{{ f.id }}">{{ f.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="hidden" name='act' value="{{ act }}">
+    <input type="submit" value="Move Topic" />
+  </form>
+{% endblock %}

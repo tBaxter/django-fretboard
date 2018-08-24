@@ -1,0 +1,35 @@
+<div class="button-bar thinline divided right">
+  {% if user.is_staff and perms.fretboard.can_delete_topic %}
+    <span class="tool_trigger">⚙</span>
+    <form action="{% url 'mod_topic' topic.id forum_slug %}" class="post-admin">
+      {% if topic.is_sticky %}
+        <label for="id-act-unstick">
+          <input type="radio" name="act" id="id-act-unstick" value="unstick">
+          Unstick
+        </label>
+      {% else %}
+        <label for="id-act-stick" title="Stick">
+          <input type="radio" name="act" id="id-act-stick" value="stick"> 📌
+        </label>
+      {% endif %}
+      <label for="id-act-delete" data-confirm="Delete topic?" title="Delete">
+        <input type="radio" name="act" id="id-act-delete" value="delete"> ❌
+      </label>
+
+      {% if topic.is_locked %}
+        <label for="id-act-unlock" data-confirm="Unlock topic?" title="Unlock">
+          <input type="radio" name="act" id="id-act-unlock" value="unlock"> 🔓
+        </label>
+      {% else %}
+        <label for="id-act-lock" data-confirm="Lock topic?" title="Lock">
+          <input type="radio" name="act" id="id-act-lock" value="lock"> 🔒
+        </label>
+      {% endif %}
+      <label for="id-act-move">
+        <input type="radio" name="act" id="id-act-move" value="move"> ⇨
+      </label>
+      <input type="submit">
+    </form>
+  {% endif %}
+  {{ output_text|safe }}
+</div>

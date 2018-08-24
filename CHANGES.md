@@ -1,3 +1,7 @@
+## 1.17.5
+* Removed deprecated permalink decorator
+* Updated and expanded tests
+
 ## 1.17.4
 * Corrected outdated template syntax
 

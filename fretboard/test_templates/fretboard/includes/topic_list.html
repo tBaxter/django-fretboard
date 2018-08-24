@@ -1,0 +1,51 @@
+{% load humanize typogrify_tags fretboard_tags cache voting_tags %}
+
+{% with request.session.last_seen_timestamp as new_time %}
+  {% for topic in topics %}
+    {# Cache these snippets until mod time changes #}
+    {% cache 360 't_list' topic.id topic.modified_int forum_slug user.is_superuser 2 %}
+      <article class="topic {{ topic.votes|set_flag }}">
+        {% with topic.forum as t_forum %}
+          <section class="t">
+            {% if not can_add_topic %} 
+              <h2 class="kicker">
+                <a href="{% url 'topic_list' t_forum.slug %}">{{ t_forum.name }}</a>
+              </h2>
+            {% endif %}
+            <h1 class="{% if topic.is_locked %}icon-lock {% endif %}{% if topic.is_sticky %}icon-sticky{% endif %}">
+              <a href="{{ topic.get_absolute_url }}">{{ topic.name|typogrify }}</a>
+            </h1>
+            <!--googleoff: all-->
+              <p>
+                {% if topic.created %} 
+                  <span class="meta">{{ topic.author.display_name|title|truncatechars:"30" }} started</span>
+                  <time datetime="{{ topic.created|date:"Y-m-d\TH:i:00" }}">
+                    {{ topic.created|naturaltime }}
+                  </time>
+                {% endif %}
+              </p>
+            <!--googleon: all-->
+          </section><!-- /.t -->
+
+          <section class="last clearfix">
+            {% with topic.latest_post as latest %}
+              
+              {% topic_quick_links topic latest last_seen_time %}
+              
+              {% if topic.post_count > 1 %}
+                <p>
+                  <span class="meta">
+                    {{ latest.author_display_name|title|truncatechars:"30" }} updated
+                  </span>
+                  <time datetime="{{ latest.post_date|date:"Y-m-d\TH:i:00" }}" title="{{ latest.post_date }}">
+                    {{ latest.post_date|naturaltime }}
+                  </time>
+                </p>
+              {% endif %}
+            {% endwith %}
+          </section>
+        {% endwith %}
+      </article>
+    {% endcache %}
+  {% endfor %}
+{% endwith %}

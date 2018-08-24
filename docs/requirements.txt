@@ -1,4 +1,4 @@
-tango-shared-core>=0.8
+tango-shared-core>=1.5
 tango-voting>=0.4
 django>=2.0
 jinja2

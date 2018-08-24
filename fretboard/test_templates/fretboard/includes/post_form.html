@@ -1,0 +1,9 @@
+{% csrf_token %}
+
+{{ form.non_field_errors }}
+
+{{ form.as_p }}
+
+<p class="submit">
+  <input type="submit" value="{% firstof form_title 'Add post' %}" id="submit" tabindex="2">
+</p>

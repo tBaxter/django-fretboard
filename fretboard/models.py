@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils.functional import cached_property
 
 from easy_thumbnails.fields import ThumbnailerImageField
@@ -24,9 +25,6 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
         db_table = 'forum_category'
-
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -61,18 +59,14 @@ class Forum(models.Model):
     )
     is_closed = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = 'forum_forum'
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('topic_list', [str(self.slug)])
+        return reverse('topic_list', args=(self.slug))
 
     def get_recent(self):
         return self.topic_set.all().order_by('-id')[:3]
@@ -124,9 +118,6 @@ class Topic(models.Model):
 
     objects = TopicManager()
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
         return self.name
 
@@ -141,10 +132,9 @@ class Topic(models.Model):
         """
         return "{0}page1/".format(self.get_short_url())
 
-    @models.permalink
     def get_short_url(self):
         """ Returns short version of topic url (without page number) """
-        return ('post_short_url', [self.forum.slug, self.slug, str(self.id)])
+        return reverse('post_short_url', args=(self.forum.slug, self.slug, self.id))
 
     @cached_property
     def last_url(self):

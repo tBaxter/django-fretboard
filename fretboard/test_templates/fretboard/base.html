@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load cache thumbnail fretboard_tags %}
+{% block appcache %}{% endblock %}
+{% block title %}{{ site_name }} Forums {% endblock %}
+
+{% block extrahead %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}fretboard/fretboard.css">
+{% endblock %}
+
+{% block bodyid %}board{% endblock %}
+
+{% block messages %}
+  {% block announcement %}{% endblock %}
+  {{ block.super }}
+{% endblock %}
+
+{% block forum_nav %}
+  {% if user.is_authenticated %}
+    <li>
+      <a href="/forum/new-topics/" title="New topics since your last visit">
+        <span class="right">{{ topic_counts.1 }}</span> Since Your Last Visit
+      </a>
+    </li>
+    <li id="recent_topics"><a href="/forum/my-topics/">Your recent topics</a></li>
+
+    {# keep within authenticated block to keep hits down #}
+    <li id="searchhold">
+      <a href="{% url 'fretboard_search' %}" id="search-box-trigger">Search</a>
+      <form action="{% url 'fretboard_search' %}" method="get" class="boxedform" id="forum_search">
+        <p>
+          <label for="id_name">Topic name:</label>
+          <input type="text" name="name" value="" id="id_name" />
+        </p>
+        <p>
+          <label for="id_text">Post text:</label>
+          <input type="text" name="text" id="id_text" />
+        </p>
+        <p class="submit">
+          <input type="submit" value="search">
+        </p>
+        <p class="meta">Note: Topic search is much faster. Probably works better, too.</p>
+      </form>
+    </li>
+  {% endif %}
+  <select class="url-selector">
+    <option value="">Jump to...</option>
+    {% get_forum_list as forum_list %}
+    {% regroup forum_list by category__name as forum_names %}
+    {% for c in forum_names %}
+      <optgroup label="{{ c.grouper }}">
+        {% for f in c.list %}
+          <option value="{% url 'topic_list' f.slug %}">{{ f.name }}</option>
+        {% endfor %}
+      </optgroup>
+    {% endfor %}
+  </select>
+{% endblock %}
+
+{% block extrascript %}
+  <script src="{{ STATIC_URL }}libs/tango-markitup-min.js"></script>
+  <script src ="{{ STATIC_URL }}libs/lscache.js"></script>
+  <script>
+    {% block init_forum_js %}{% endblock %}
+    {% if user.auto_load_forum %}
+      var page = {% firstof page 1 %},
+          original_page = page,
+          prev_page = original_page - 1,
+          loadable = true,
+          current_page = $('span.current_page'),
+          loaded = [page],
+          page_max = {{ page_obj.paginator.num_pages }} -1;
+    {% endif %}
+  </script>
+  <script src="{{ STATIC_URL }}fretboard/fretboard.js"></script>
+{% endblock %}
