@@ -1,0 +1,42 @@
+{% load fretboard_tags voting_tags tango_time_tags %}
+
+<div id="comment-list">
+  {% for obj in object_list %}
+    <article class="post {{ obj.votes|set_flag }}" id="post-{{ obj.id }}">
+      {% include "fretboard/includes/post_single.html" %}
+      {% if authenticated_request %}
+        <footer>
+          {% if user.show_signatures and obj.user.signature %}
+            <p class="meta signature">{{ obj.user.signature|striptags }}</p>
+          {% endif %}
+          {% if not locked %}
+            <ul class="postcontrols button sub-nav thinline">
+              <li>
+                <a href="#reply" title="Quick reply to this topic">Reply</a>
+                <span class="button-trigger divide-left">▼</span>
+                <ul class="button-target">
+                  <li class="icon-quote">
+                    <a href="{% url 'post_with_quote' topic_slug topic_id obj.id %}">Quote</a>
+                  </li>
+                  {% if obj.user_id == user.id or user.is_staff and perms.fretboard.can_delete_post %}
+                    <li class="icon-edit">
+                      <a href="{% url 'edit_post' obj.id %}">Edit</a>
+                    </li>
+                    <li class="icon-delete post-admin">
+                      <a href="{% url 'delete_post' obj.id topic_id %}" data-confirm="Delete This Post?">Delete</a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </li>
+            </ul>
+            <span class="post-voting post-admin button thinline">
+              <a href="{% url 'generic_vote' 'post' obj.id 'down' %}" data-confirm="use_title" title="Mark as no value, inflammatory or spam?">▼</a>
+              <span class="votes">{{ obj.votes|clean_score }}</span>
+              <a href="{% url 'generic_vote' 'post' obj.id 'up' %}" title="Mark as helpful, informative or interesting.">▲</a>
+            </span>
+          {% endif %}
+        </footer>
+      {% endif %}
+    </article>
+  {% endfor %}
+</div>

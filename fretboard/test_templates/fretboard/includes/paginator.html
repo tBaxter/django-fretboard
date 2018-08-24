@@ -1,0 +1,33 @@
+{% if is_paginated %}
+  <span class="is_paginated">
+    {% if page > 3 %}
+      <a href="{{ page_url }}" title="First Page" class="arrow">
+        ◀◀
+      </a>
+    {% endif %}
+    {% if has_previous %}
+      <a href="{{ page_url }}?page={{ previous }}" title="Previous" class="arrow">
+        ◀
+      </a>
+    {% endif %}
+    {% for num in page_numbers %}
+      {% if num = page %}
+        <span class="current_page">{{ num }}</span>
+      {% else %}
+        <a href="{{ page_url }}?page={{ num }}" title="Page {{ num }}">
+          {{ num }}
+        </a>
+      {% endif %}
+    {% endfor %}
+    {% if has_next %}
+      <a href="{{ page_url }}?page={{ page_obj.next_page_number }}" title="Next" class="arrow">
+        ▶
+      </a>
+    {% endif %}
+    {% if pages > 4 and page != pages and slugtype = 'topic' %}
+      <a href="{{ page_url }}?page={{ pages }}" title="Last" class="arrow">
+        ▶▶
+      </a>
+    {% endif %}
+  </span>
+{% endif %}
