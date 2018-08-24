@@ -57,7 +57,7 @@ class TestFretboardGeneralViews(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('forums' in resp.context)
 
-    def test_topic_list(self):
+    def test_category_topic_list(self):
         """
         Test general, category-based topic list.
         """
@@ -66,8 +66,15 @@ class TestFretboardGeneralViews(TestCase):
         self.assertTrue('object_list' in resp.context)
         self.assertTrue('page' in resp.context)
         self.assertTrue('lastseen_time' in resp.context)
+        self.assertTrue('forum_slug' in resp.context)
+        self.assertEqual(resp.context['forum_slug'], self.forum.slug)
+        self.assertTrue('forum_name' in resp.context)
+        self.assertEqual(resp.context['forum_name'], self.forum.name)
+        self.assertTrue('admin_msg' in resp.context)
+        self.assertEqual(resp.context['admin_msg'], self.forum.message)
+        self.assertTrue('can_add_topic' in resp.context)
+        self.assertEqual(resp.context['can_add_topic'], True)
 
-    @unittest.skip("Template is overly opinionated")
     def test_latest_topics(self):
         """
         Test of latest topics list.
