@@ -108,7 +108,7 @@ class TestFretboardGeneralViews(TestCase):
         self.assertEqual(resp.context['forum_name'], self.forum.name)
         self.assertTrue('form' in resp.context)
         self.assertTrue('canonical_url' in resp.context)
-        self.assertEqual(resp.context['canonical_url'], self.topic.get_absolute.url())
+        self.assertEqual(resp.context['canonical_url'], self.topic.get_absolute_url())
 
 
     @unittest.skip("Template is overly opinionated")
