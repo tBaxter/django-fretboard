@@ -99,7 +99,7 @@ class TestFretboardGeneralViews(TestCase):
         self.assertTrue('topic_slug' in resp.context)
         self.assertEqual(resp.context['topic_slug'], self.topic.slug)
         self.assertTrue('locked' in resp.context)
-        self.assertEqual(resp.context['locked'], self.topic.locked)
+        self.assertEqual(resp.context['locked'], self.topic.is_locked)
         self.assertTrue('start_number' in resp.context)
         self.assertTrue('page' in resp.context)
         self.assertTrue('forum_slug' in resp.context)
