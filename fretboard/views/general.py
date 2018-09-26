@@ -71,7 +71,7 @@ class NewTopics(BaseTopicList):
         last_seen_timestamp = self.request.session.get('last_seen_timestamp', None)
         if not last_seen_timestamp or last_seen_timestamp > one_day_ago_int:
             last_seen_timestamp = one_day_ago_int
-        return Topic.objects.filter(modified_int__gt=last_seen_timestamp).select_related('post')
+        return Topic.objects.filter(modified_int__gt=last_seen_timestamp)
 
     def get_context_data(self, **kwargs):
         context = super(NewTopics, self).get_context_data(**kwargs)
