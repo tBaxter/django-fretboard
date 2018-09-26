@@ -1,3 +1,7 @@
+## 1.17.6
+* Removed stray `select_related`
+* Minor test updates
+
 ## 1.17.5
 * Removed deprecated permalink decorator
 * Updated and expanded tests

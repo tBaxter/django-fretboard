@@ -82,6 +82,7 @@ class TestFretboardGeneralViews(TestCase):
         resp = self.client.get(reverse('new_24_hours'))
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('object_list' in resp.context)
+        self.assertTrue('topics' in resp.context)
         self.assertTrue('page' in resp.context)
 
     def test_post_list(self):
